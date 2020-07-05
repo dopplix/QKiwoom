@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/json">
+        <file>functions.json</file>
+        <file>tr.json</file>
+    </qresource>
+</RCC>
