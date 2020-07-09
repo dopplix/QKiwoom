@@ -1,6 +1,7 @@
 <RCC>
-    <qresource prefix="/json">
-        <file>functions.json</file>
-        <file>tr.json</file>
+    <qresource prefix="/doc">
+        <file>json/functions.json</file>
+        <file>json/tr.json</file>
+        <file>json/krmap.json</file>
     </qresource>
 </RCC>

@@ -7,10 +7,16 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QListWidget>
+#include <QTextEdit>
 #include <QFile>
-#include "qkoa.h"
-#include "qjsontreewidget.h"
-#include "qjsonobjectmutex.h"
+#include "utils/qkoa.h"
+#include "utils/qjsonobjectmutex.h"
+#include "utils/qmysql.h"
+#include "components/qjsontreewidget.h"
+#include "tabs/fnctab.h"
+#include "tabs/trtab.h"
+#include "tabs/assettab.h"
+#include "tabs/conditiontab.h"
 
 class Widget : public QWidget{
     Q_OBJECT
@@ -18,19 +24,22 @@ class Widget : public QWidget{
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
-    QJsonTreeWidget* functionTree = new QJsonTreeWidget();
-    QListWidget* functionList = new QListWidget;
-    QTableWidget* functionTable = new QTableWidget;
-    QJsonTreeWidget* trTree = new QJsonTreeWidget();
-    QListWidget* trList = new QListWidget;
-    QTableWidget* trTable = new QTableWidget;
-    QJsonTreeWidget* storeTree = new QJsonTreeWidget();
+    FncTab* fncTab = new FncTab;
+    TrTab* trTab = new TrTab;
+    AssetTab* assetTab = new AssetTab;
+    ConditionTab* conditionTab = new ConditionTab;
+    QJsonTreeWidget* storeTree = new QJsonTreeWidget;
+    QJsonTreeWidget* resultTree = new QJsonTreeWidget;
+    QTextEdit* logEdit = new QTextEdit;
     QKoa* koa = new QKoa;
-    QJsonArray fncDocArr;
-    QJsonArray trDocArr;
+    QMysql* mysql = new QMysql;
+    QJsonObject krMap;
     QJsonObjectMutex* store = new QJsonObjectMutex;
+    bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
+    void initializeConditions();
+    QJsonObject processTr(QJsonObject obj);
 
 public slots:
-    void test();
+
 };
 #endif // WIDGET_H

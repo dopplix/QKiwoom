@@ -16,16 +16,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    components/qjsontreewidget.cpp \
+    tabs/assettab.cpp \
+    tabs/conditiontab.cpp \
+    tabs/fnctab.cpp \
+    tabs/fnctab.cpp \
     main.cpp \
-    qjsonobjectmutex.cpp \
-    qjsontreewidget.cpp \
-    qkoa.cpp \
-    widget.cpp
+    tabs/trtab.cpp \
+    utils/qjsonobjectmutex.cpp \
+    utils/qjsonutils.cpp \
+    utils/qkoa.cpp \
+    utils/qmysql.cpp \
+    widget.cpp \
 
 HEADERS += \
-    qjsonobjectmutex.h \
-    qjsontreewidget.h \
-    qkoa.h \
+    components/qjsontreewidget.h \
+    tabs/assettab.h \
+    tabs/conditiontab.h \
+    tabs/fnctab.h \
+    tabs/fnctab.h \
+    tabs/trtab.h \
+    utils/qjsonobjectmutex.h \
+    utils/qjsonutils.h \
+    utils/qkoa.h \
+    utils/qmysql.h \
     widget.h
 
 # Default rules for deployment.

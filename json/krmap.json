@@ -1,0 +1,13 @@
+{
+    "assetCode":"종목코드",
+    "lastTrTime":"시간",
+    "price":"현재가",
+    "size":"체결거래량",
+    "intense":"체결강도",
+    "diffPrice":"전일대비",
+    "bestBid":"우선매수호가단위",
+    "bestAsk":"우선매도호가단위",
+    "rate":"대비율",
+    "accSize":"누적거래량",
+    "accAmount":"누적거래대금"
+}
