@@ -13,6 +13,7 @@
 #include <QUuid>
 #include <QThread>
 #include <QEventLoop>
+#include <QTimer>
 #include "widget.h"
 #include "utils/qjsonutils.h"
 #include "utils/qtimeutil.h"
@@ -174,7 +175,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
             }else if(caller=="1989"){
                 //TODO Get TR Obj by OptName
                 QJsonObject finalResultObj = processTr(trTab->trDocArr.at(77).toObject());
-                store->setValue("UDF",finalResultObj);
+                //store->setValue("UDF",finalResultObj);
                 emit(historyReceived(finalResultObj));
             }
         }else if(event=="onReceiveConditionVer"){
@@ -217,6 +218,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
         koa->setInputValue(krMap.value("targetDate").toString(),"20200716");
         koa->setInputValue(krMap.value("modifiedPriceIndex").toString(),"0");
         koa->commRqData("UDF","OPT10081",0,"1989");
+        QEventLoop* loop = new QEventLoop;
         connect(this,&Widget::historyReceived,[=](QJsonObject resultObj){
             QJsonArray klineArr = resultObj.value("multi").toArray();
             QJsonArray tArr;
@@ -247,10 +249,14 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
             resObj->insert("l",lArr);
             resObj->insert("c",cArr);
             resObj->insert("v",vArr);
+            QTimer::singleShot(0,loop,&QEventLoop::quit);
         });
-        QEventLoop loop;
-        connect(this,&Widget::historyReceived,&loop,&QEventLoop::quit);
-        loop.exec();
+        QTimer::singleShot(5000,loop,[=]{
+            resObj->insert("s","error");
+            resObj->insert("errmsg","Time Out");
+            QTimer::singleShot(0,loop,&QEventLoop::quit);
+        });
+        loop->exec();
     },Qt::BlockingQueuedConnection);
     thread->start();
     storeTree->setMaximumWidth(400);
@@ -313,8 +319,8 @@ QJsonObject Widget::processTr(QJsonObject trObj){
             QString ret = koa->getCommData(optName,outputSingleName,0,recordName);
             resultSingleObj.insert(recordName,ret.replace(" ",""));
         }
-        logEdit->append("Single Result");
-        logEdit->append(QJsonDocument(resultSingleObj).toJson(QJsonDocument::Indented));
+        //logEdit->append("Single Result");
+        //logEdit->append(QJsonDocument(resultSingleObj).toJson(QJsonDocument::Indented));
         finalResultObj.insert("single",resultSingleObj);
     }
     //Multi
@@ -333,8 +339,8 @@ QJsonObject Widget::processTr(QJsonObject trObj){
             }
             resultArr.append(resultMultiObj);
         }
-        logEdit->append("Multi Result");
-        logEdit->append(QJsonDocument(resultArr).toJson(QJsonDocument::Indented));
+        //logEdit->append("Multi Result");
+        //logEdit->append(QJsonDocument(resultArr).toJson(QJsonDocument::Indented));
         finalResultObj.insert("multi",resultArr);
     }
     return finalResultObj;
