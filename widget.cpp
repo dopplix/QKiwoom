@@ -11,9 +11,11 @@
 #include <QTabWidget>
 #include <QDateTime>
 #include <QUuid>
-#include <QTextCodec>
+#include <QThread>
+#include <QEventLoop>
 #include "widget.h"
 #include "utils/qjsonutils.h"
+#include "utils/qtimeutil.h"
 
 Widget::Widget(QWidget *parent) : QWidget(parent){
     QTabWidget* mainTabWidget = new QTabWidget;
@@ -34,10 +36,10 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
     layout->addWidget(testPush);
     krMap = QJsonUtils::readJsonObjFromFile(":/doc/json/krmap.json");
     connect(testPush,&QPushButton::clicked,[=]{
-//        koa->setInputValue(krMap.value("assetCode").toString(),"000060");
-//        QString uuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-//        koa->commRqData(uuid,"OPT10003",0,"1111");
-        qDebug()<<sendCondToMysql("QString index","QString condName","QString assetName","QString event","QString assetCode","QString sign","QString accAmount","QString accSize","QString rate","QString lastTrTime","QString bestAsk","QString bestBid","QString diffPrice","QString intense","QString size","QString price");
+        koa->setInputValue(krMap.value("assetCode").toString(),"000060");
+        koa->setInputValue(krMap.value("targetDate").toString(),"20200716");
+        koa->setInputValue(krMap.value("modifiedPriceIndex").toString(),"0");
+        koa->commRqData("UDF","OPT10081",0,"1989");
     });
     this->setLayout(layout);
     store->setChangeCheck(true);
@@ -169,6 +171,11 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
                 QString price = targetObj.value(krMap.value("price").toString()).toString();
                 qDebug()<<"Query"<<sendCondToMysql(condIndex,condName,assetName,eventName,assetCode,sign,accAmount,accSize,rate,lastTrTime,bestAsk,bestBid,diffPrice,intense,size,price);
                 store->removeValue(uuid);
+            }else if(caller=="1989"){
+                //TODO Get TR Obj by OptName
+                QJsonObject finalResultObj = processTr(trTab->trDocArr.at(77).toObject());
+                store->setValue("UDF",finalResultObj);
+                emit(historyReceived(finalResultObj));
             }
         }else if(event=="onReceiveConditionVer"){
             initializeConditions();
@@ -200,6 +207,52 @@ Widget::Widget(QWidget *parent) : QWidget(parent){
             storeTree->resizeColumnToContents(i);
         }
     });
+    QThread* thread = new QThread;
+    QObject* worker = new QObject;
+    worker->moveToThread(thread);
+    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
+        qDebug()<<"2 WORKER THREAD"<<QThread::currentThread();
+        qDebug()<<"3"<<req;
+        koa->setInputValue(krMap.value("assetCode").toString(),"000060");
+        koa->setInputValue(krMap.value("targetDate").toString(),"20200716");
+        koa->setInputValue(krMap.value("modifiedPriceIndex").toString(),"0");
+        koa->commRqData("UDF","OPT10081",0,"1989");
+        connect(this,&Widget::historyReceived,[=](QJsonObject resultObj){
+            QJsonArray klineArr = resultObj.value("multi").toArray();
+            QJsonArray tArr;
+            QJsonArray oArr;
+            QJsonArray hArr;
+            QJsonArray lArr;
+            QJsonArray cArr;
+            QJsonArray vArr;
+            for(QJsonValue v : klineArr){
+                QJsonObject obj = v.toObject();
+                QString date = obj.value(krMap.value("date").toString()).toString();
+                QString open = obj.value(krMap.value("open").toString()).toString();
+                QString high = obj.value(krMap.value("high").toString()).toString();
+                QString low = obj.value(krMap.value("low").toString()).toString();
+                QString close = obj.value(krMap.value("close").toString()).toString();
+                QString volume = obj.value(krMap.value("volume").toString()).toString();
+                tArr.insert(0,double(QTimeUtil::kiwoomToDt(date).toTime_t()));
+                oArr.insert(0,open.toDouble());
+                hArr.insert(0,high.toDouble());
+                lArr.insert(0,low.toDouble());
+                cArr.insert(0,close.toDouble());
+                vArr.insert(0,volume.toDouble());
+            }
+            resObj->insert("s","ok");
+            resObj->insert("t",tArr);
+            resObj->insert("o",oArr);
+            resObj->insert("h",hArr);
+            resObj->insert("l",lArr);
+            resObj->insert("c",cArr);
+            resObj->insert("v",vArr);
+        });
+        QEventLoop loop;
+        connect(this,&Widget::historyReceived,&loop,&QEventLoop::quit);
+        loop.exec();
+    },Qt::BlockingQueuedConnection);
+    thread->start();
     storeTree->setMaximumWidth(400);
     resultTree->setMaximumWidth(400);
     logEdit->setMaximumHeight(300);
@@ -209,9 +262,7 @@ Widget::~Widget(){
 
 }
 bool Widget::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
-    QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
     QSqlQuery query;
-
     query.prepare("INSERT INTO tb_cond (eventTime,condIndex,condName,assetName,event,assetCode,sign,accAmount,accSize,rate,lastTrTime,bestAsk,bestBid,diffPrice,intense,size,price)"
                   "VALUES (:eventTime,:condIndex,:condName,:assetName,:event,:assetCode,:sign,:accAmount,:accSize,:rate,:lastTrTime,:bestAsk,:bestBid,:diffPrice,:intense,:size,:price)");
     query.bindValue(":eventTime",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));

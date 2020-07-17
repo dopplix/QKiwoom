@@ -17,6 +17,7 @@
 #include "tabs/trtab.h"
 #include "tabs/assettab.h"
 #include "tabs/conditiontab.h"
+#include "utils/qtvudfserver.h"
 
 class Widget : public QWidget{
     Q_OBJECT
@@ -33,6 +34,7 @@ public:
     QTextEdit* logEdit = new QTextEdit;
     QKoa* koa = new QKoa;
     QMysql* mysql = new QMysql;
+    QTvUdfServer* udfServer = new QTvUdfServer;
     QJsonObject krMap;
     QJsonObjectMutex* store = new QJsonObjectMutex;
     bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
@@ -41,5 +43,7 @@ public:
 
 public slots:
 
+signals:
+    void historyReceived(QJsonObject obj);
 };
 #endif // WIDGET_H

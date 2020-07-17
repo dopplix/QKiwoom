@@ -1,4 +1,4 @@
-QT       += core gui axcontainer sql
+QT       += core gui axcontainer sql network concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +27,8 @@ SOURCES += \
     utils/qjsonutils.cpp \
     utils/qkoa.cpp \
     utils/qmysql.cpp \
+    utils/qtimeutil.cpp \
+    utils/qtvudfserver.cpp \
     widget.cpp \
 
 HEADERS += \
@@ -40,7 +42,12 @@ HEADERS += \
     utils/qjsonutils.h \
     utils/qkoa.h \
     utils/qmysql.h \
+    utils/qtimeutil.h \
+    utils/qtvudfserver.h \
     widget.h
+
+INCLUDEPATH += $$PWD/qhttpserver/qhttpserver/src
+LIBS += -L$$PWD/qhttpserver/lib -lqhttpserverd
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
