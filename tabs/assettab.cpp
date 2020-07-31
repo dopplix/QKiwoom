@@ -2,18 +2,23 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-AssetTab::AssetTab(QWidget *parent) : QWidget(parent){
+AssetTab::AssetTab(QWidget *parent) : ConnectedWidget(parent){
+    //Declare
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QHBoxLayout* assetLayout = new QHBoxLayout;
     QPushButton* requestAssetPush = new QPushButton("Load Asset Data");
-    assetLayout->addWidget(assetTree);
-    assetLayout->addWidget(assetList);
-    mainLayout->addWidget(requestAssetPush);
-    mainLayout->addLayout(assetLayout);
+    //Render
     this->setLayout(mainLayout);
+        mainLayout->addWidget(requestAssetPush);
+        mainLayout->addLayout(assetLayout);
+            assetLayout->addWidget(assetTree);
+            assetLayout->addWidget(assetList);
+    //Connect
     connect(requestAssetPush,&QPushButton::clicked,[=]{
         emit(requestAssetData());
     });
+}
+void AssetTab::onStoreChanged(QJsonObject diffObj){
 
 }
 void AssetTab::initAssets(QJsonArray docArr){

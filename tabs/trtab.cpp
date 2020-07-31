@@ -5,30 +5,37 @@
 #include "trtab.h"
 #include "../utils/qjsonutils.h"
 
-TrTab::TrTab(QWidget *parent) : QWidget(parent){
+extern QJsonArray trDocArr;
+
+TrTab::TrTab(QWidget *parent) : ConnectedWidget(parent){
+    //Declare
     QVBoxLayout* trWidgetLayout = new QVBoxLayout;
     QHBoxLayout* trLayout = new QHBoxLayout;
     QPushButton* reqTrPush = new QPushButton("Request TR");
-    trLayout->addWidget(trTree);
-    trLayout->addWidget(trList);
-    trLayout->addWidget(trTable);
-    trWidgetLayout->addLayout(trLayout);
-    trWidgetLayout->addWidget(reqTrPush);
+    //Initialize
+    trTree = new QJsonTreeWidget();
+        trTree->appendJson(trDocArr);
+        trTree->expandAll();
+    trList = new QListWidget;
+        QStringList trNameList;
+        for(int i=0;i<trDocArr.size();i++){
+            QString optName = trDocArr.at(i).toObject().value("optName").toString();
+            QString trDetail = trDocArr.at(i).toObject().value("trDetail").toString();
+            trNameList.append(optName+" "+trDetail);
+        }
+        trList->addItems(trNameList);
+    trTable = new QTableWidget;
+        trTable->setColumnCount(1);
+        trTable->setHorizontalHeaderLabels({"Input"});
+        trTable->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    //Render
     this->setLayout(trWidgetLayout);
-    trTable->setColumnCount(1);
-    trTable->setHorizontalHeaderLabels({"Input"});
-    trTable->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    trDocArr = QJsonUtils::readJsonArrFromFile(":/doc/json/tr.json");
-    trTree->appendJson(trDocArr);
-    trTree->expandAll();
-    int nTrArr = trDocArr.size();
-    QStringList trNameList;
-    for(int i=0;i<nTrArr;i++){
-        QString optName = trDocArr.at(i).toObject().value("optName").toString();
-        QString trDetail = trDocArr.at(i).toObject().value("trDetail").toString();
-        trNameList.append(optName+" "+trDetail);
-    }
-    trList->addItems(trNameList);
+        trWidgetLayout->addLayout(trLayout);
+            trLayout->addWidget(trTree);
+            trLayout->addWidget(trList);
+            trLayout->addWidget(trTable);
+        trWidgetLayout->addWidget(reqTrPush);
+    //Connect
     connect(trList,&QListWidget::currentRowChanged,[=]{
        int i = trList->currentRow();
        QJsonObject currentTr = trDocArr.at(i).toObject();

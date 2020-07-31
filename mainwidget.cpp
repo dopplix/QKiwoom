@@ -14,60 +14,69 @@
 #include <QThread>
 #include <QEventLoop>
 #include <QTimer>
-#include "widget.h"
+#include "mainwidget.h"
 #include "utils/qjsonutils.h"
 #include "utils/qtimeutil.h"
+#include "dispatcher.h"
 
-Widget::Widget(QWidget *parent) : QWidget(parent){
+extern Dispatcher* dispatcher;
+extern QJsonObject krMap;
+
+MainWidget::MainWidget(QWidget *parent) : ConnectedWidget(parent){
+    //Initialize
     QTabWidget* mainTabWidget = new QTabWidget;
     QHBoxLayout* storeLayout = new QHBoxLayout;
     QHBoxLayout* resultLayout = new QHBoxLayout;
     QVBoxLayout* layout = new QVBoxLayout;
     QPushButton* testPush = new QPushButton("Test");
-    mainTabWidget->addTab(fncTab,"Function");
-    mainTabWidget->addTab(trTab,"TR");
-    mainTabWidget->addTab(assetTab,"Asset");
-    mainTabWidget->addTab(conditionTab,"Condition");
-    storeLayout->addWidget(mainTabWidget);
-    storeLayout->addWidget(storeTree);
-    resultLayout->addWidget(logEdit);
-    resultLayout->addWidget(resultTree);
-    layout->addLayout(storeLayout);
-    layout->addLayout(resultLayout);
-    layout->addWidget(testPush);
-    krMap = QJsonUtils::readJsonObjFromFile(":/doc/json/krmap.json");
+    fncTab = new FncTab;
+        dispatcher->connectWidget(fncTab);
+    trTab = new TrTab;
+        dispatcher->connectWidget(trTab);
+    assetTab = new AssetTab;
+        dispatcher->connectWidget(assetTab);
+    conditionTab = new ConditionTab;
+        dispatcher->connectWidget(conditionTab);
+    storeTree = new QJsonTreeWidget;
+    resultTree = new QJsonTreeWidget;
+    logEdit = new QTextEdit;
+    //Render
+    this->setLayout(layout);
+        layout->addLayout(storeLayout);
+            storeLayout->addWidget(mainTabWidget);
+                mainTabWidget->addTab(fncTab,"Function");
+                mainTabWidget->addTab(trTab,"TR");
+                mainTabWidget->addTab(assetTab,"Asset");
+                mainTabWidget->addTab(conditionTab,"Condition");
+            storeLayout->addWidget(storeTree);
+        layout->addLayout(resultLayout);
+            resultLayout->addWidget(logEdit);
+            resultLayout->addWidget(resultTree);
+        layout->addWidget(testPush);
+    //Style
+    storeTree->setMaximumWidth(400);
+    resultTree->setMaximumWidth(400);
+    logEdit->setMaximumHeight(300);
+    resultTree->setMaximumHeight(300);
+    this->resize(1920,1200);
+    //Connect
     connect(testPush,&QPushButton::clicked,[=]{
         koa->setInputValue(krMap.value("assetCode").toString(),"000060");
         koa->setInputValue(krMap.value("targetDate").toString(),"20200716");
         koa->setInputValue(krMap.value("modifiedPriceIndex").toString(),"0");
         koa->commRqData("UDF","OPT10081",0,"1989");
     });
-    this->setLayout(layout);
-    store->setChangeCheck(true);
-
-    this->resize(1920,1200);
-    connect(store,&QJsonObjectMutex::somethingChanged,[=](QJsonObject diffObj){
-        QJsonObject storeObj = store->getObject();
-        storeTree->clear();
-        storeTree->appendJson(storeObj);
-        storeTree->expandAll();
-        for(int i=0;i<storeTree->columnCount();i++){
-            storeTree->resizeColumnToContents(i);
-        }
-    });
     connectTabActions();
     connectStoreToTabs();
     initializeKoaEventRouter();
     initializeUdfWorker();
-    storeTree->setMaximumWidth(400);
-    resultTree->setMaximumWidth(400);
-    logEdit->setMaximumHeight(300);
-    resultTree->setMaximumHeight(300);
+    //Setting
+    store->setChangeCheck(true);
 }
-Widget::~Widget(){
+MainWidget::~MainWidget(){
 
 }
-bool Widget::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
+bool MainWidget::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
     QSqlQuery query;
     query.prepare("INSERT INTO tb_cond (eventTime,condIndex,condName,assetName,event,assetCode,sign,accAmount,accSize,rate,lastTrTime,bestAsk,bestBid,diffPrice,intense,size,price)"
                   "VALUES (:eventTime,:condIndex,:condName,:assetName,:event,:assetCode,:sign,:accAmount,:accSize,:rate,:lastTrTime,:bestAsk,:bestBid,:diffPrice,:intense,:size,:price)");
@@ -90,7 +99,7 @@ bool Widget::sendCondToMysql(QString condIndex, QString condName, QString assetN
     query.bindValue(":price",price);
     return query.exec();
 }
-void Widget::initializeConditions(){
+void MainWidget::initializeConditions(){
     QString conditionStr = koa->getConditionNameList();
     qDebug()<<conditionStr;
     QStringList conditionList = conditionStr.split(";");
@@ -105,7 +114,7 @@ void Widget::initializeConditions(){
     }
     conditionTab->initConditions(conditionArr);
 }
-void Widget::initializeUdfWorker(){
+void MainWidget::initializeUdfWorker(){
     QThread* thread = new QThread;
     QObject* worker = new QObject;
     worker->moveToThread(thread);
@@ -117,7 +126,7 @@ void Widget::initializeUdfWorker(){
         koa->setInputValue(krMap.value("modifiedPriceIndex").toString(),"0");
         koa->commRqData("UDF","OPT10081",0,"1989");
         QEventLoop* loop = new QEventLoop;
-        connect(this,&Widget::historyReceived,[=](QJsonObject resultObj){
+        connect(this,&MainWidget::historyReceived,[=](QJsonObject resultObj){
             QJsonArray klineArr = resultObj.value("multi").toArray();
             QJsonArray tArr;
             QJsonArray oArr;
@@ -158,7 +167,7 @@ void Widget::initializeUdfWorker(){
     },Qt::BlockingQueuedConnection);
     thread->start();
 }
-void Widget::initializeKoaEventRouter(){
+void MainWidget::initializeKoaEventRouter(){
     connect(koa,&QKoa::onMessageReceived,[=](QJsonObject obj){
         //logEdit->append(QJsonDocument(obj).toJson(QJsonDocument::Indented));
         QString event = obj.value("event").toString();
@@ -218,7 +227,7 @@ void Widget::initializeKoaEventRouter(){
         }
     });
 }
-void Widget::connectTabActions(){
+void MainWidget::connectTabActions(){
     connect(fncTab,&FncTab::updateCurrentFnc,[=](QJsonObject currentFnc){
         store->setValue("currentFnc",currentFnc);
     });
@@ -313,12 +322,12 @@ void Widget::connectTabActions(){
         store->setValue("currentConditions",currentCondtionArr);
     });
 }
-void Widget::connectStoreToTabs(){
+void MainWidget::connectStoreToTabs(){
     connect(store,&QJsonObjectMutex::somethingChanged,trTab,&TrTab::onStoreChanged);
     connect(store,&QJsonObjectMutex::somethingChanged,fncTab,&FncTab::onStoreChanged);
     connect(store,&QJsonObjectMutex::somethingChanged,conditionTab,&ConditionTab::onStoreChanged);
 }
-QJsonObject Widget::processTr(QJsonObject trObj){
+QJsonObject MainWidget::processTr(QJsonObject trObj){
     QString optName = trObj.value("optName").toString();
     QJsonObject finalResultObj;
     //Single
@@ -357,4 +366,13 @@ QJsonObject Widget::processTr(QJsonObject trObj){
         finalResultObj.insert("multi",resultArr);
     }
     return finalResultObj;
+}
+void MainWidget::onStoreChanged(QJsonObject diffObj){
+    QJsonObject storeObj = store->getObject();
+    storeTree->clear();
+    storeTree->appendJson(storeObj);
+    storeTree->expandAll();
+    for(int i=0;i<storeTree->columnCount();i++){
+        storeTree->resizeColumnToContents(i);
+    }
 }

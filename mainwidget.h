@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef MAINWIDGET_H
+#define MAINWIDGET_H
 
 #include <QWidget>
 #include <QAxWidget>
@@ -18,24 +18,25 @@
 #include "tabs/assettab.h"
 #include "tabs/conditiontab.h"
 #include "utils/qtvudfserver.h"
+#include "qflux/connectedwidget.h"
 
-class Widget : public QWidget{
+class MainWidget : public ConnectedWidget{
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
-    FncTab* fncTab = new FncTab;
-    TrTab* trTab = new TrTab;
-    AssetTab* assetTab = new AssetTab;
-    ConditionTab* conditionTab = new ConditionTab;
-    QJsonTreeWidget* storeTree = new QJsonTreeWidget;
-    QJsonTreeWidget* resultTree = new QJsonTreeWidget;
-    QTextEdit* logEdit = new QTextEdit;
+    MainWidget(QWidget *parent = nullptr);
+    ~MainWidget();
+    FncTab* fncTab;
+    TrTab* trTab;
+    AssetTab* assetTab;
+    ConditionTab* conditionTab;
+    QJsonTreeWidget* storeTree;
+    QJsonTreeWidget* resultTree;
+    QTextEdit* logEdit;
+    //Dispatcher
     QKoa* koa = new QKoa;
     QMysql* mysql = new QMysql;
     QTvUdfServer* udfServer = new QTvUdfServer;
-    QJsonObject krMap;
     QJsonObjectMutex* store = new QJsonObjectMutex;
     bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
     void initializeConditions();
@@ -46,8 +47,9 @@ public:
     QJsonObject processTr(QJsonObject obj);
 
 public slots:
+    void onStoreChanged(QJsonObject diffObj) override;
 
 signals:
     void historyReceived(QJsonObject obj);
 };
-#endif // WIDGET_H
+#endif // MAINWIDGET_H

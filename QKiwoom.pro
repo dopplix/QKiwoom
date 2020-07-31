@@ -17,6 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     components/qjsontreewidget.cpp \
+    dispatcher.cpp \
+    global.cpp \
+    mainwidget.cpp \
+    qflux/connectedwidget.cpp \
+    qflux/dispatchercore.cpp \
+    qflux/store/qjsonobjectmutex.cpp \
     tabs/assettab.cpp \
     tabs/conditiontab.cpp \
     tabs/fnctab.cpp \
@@ -30,10 +36,16 @@ SOURCES += \
     utils/qmysql.cpp \
     utils/qtimeutil.cpp \
     utils/qtvudfserver.cpp \
-    widget.cpp \
 
 HEADERS += \
+    actionTypes.h \
     components/qjsontreewidget.h \
+    dispatcher.h \
+    global.h \
+    mainwidget.h \
+    qflux/connectedwidget.h \
+    qflux/dispatchercore.h \
+    qflux/store/qjsonobjectmutex.h \
     tabs/assettab.h \
     tabs/conditiontab.h \
     tabs/fnctab.h \
@@ -45,8 +57,7 @@ HEADERS += \
     utils/qkoa.h \
     utils/qmysql.h \
     utils/qtimeutil.h \
-    utils/qtvudfserver.h \
-    widget.h
+    utils/qtvudfserver.h
 
 INCLUDEPATH += $$PWD/qhttpserver/qhttpserver/src
 LIBS += -L$$PWD/qhttpserver/lib -lqhttpserverd
