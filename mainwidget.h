@@ -33,18 +33,9 @@ public:
     QJsonTreeWidget* storeTree;
     QJsonTreeWidget* resultTree;
     QTextEdit* logEdit;
-    //Dispatcher
-    QKoa* koa = new QKoa;
-    QMysql* mysql = new QMysql;
-    QTvUdfServer* udfServer = new QTvUdfServer;
-    QJsonObjectMutex* store = new QJsonObjectMutex;
     bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
-    void initializeConditions();
-    void initializeUdfWorker();
     void initializeKoaEventRouter();
     void connectTabActions();
-    void connectStoreToTabs();
-    QJsonObject processTr(QJsonObject obj);
 
 public slots:
     void onStoreChanged(QJsonObject diffObj) override;

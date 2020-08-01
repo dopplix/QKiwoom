@@ -6,9 +6,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include "fnctab.h"
-#include "../utils/qjsonutils.h"
-
-extern QJsonArray fnDocArr;
+#include "global.h"
 
 FncTab::FncTab(QWidget *parent) : ConnectedWidget(parent){
     //Declare
@@ -43,18 +41,23 @@ FncTab::FncTab(QWidget *parent) : ConnectedWidget(parent){
         functionWidgetLayout->addWidget(testRealInputPush);
     //Connect
     connect(functionList,&QListWidget::currentRowChanged,[=]{
-        int i = functionList->currentRow();
-        QJsonObject currentFnc = fncDocArr.at(i).toObject();
-        emit(updateCurrentFnc(currentFnc));
+        QString currentFncName = functionList->currentItem()->text();
+        QJsonObject payload;
+        payload.insert("currentFncName",currentFncName);
+        emit(action(ActionTypes::FncTab::CHANGE_CURRENT_FUNCTION,payload));
     });
     connect(reqFncPush,&QPushButton::clicked,[=]{
+        QString currentFncName = functionList->currentItem()->text();
         int nParam = functionTable->rowCount();
-        QStringList paramList;
+        QJsonArray argArr;
         for(int i=0;i<nParam;i++){
             QString arg = functionTable->item(i,1)->text();
-            paramList.append(arg);
+            argArr.append(arg);
         }
-        emit(callFnc(paramList));
+        QJsonObject payload;
+        payload.insert("currentFncName",currentFncName);
+        payload.insert("args",argArr);
+        emit(action(ActionTypes::FncTab::CALL_CURRENT_FUNCTION,payload));
     });
     connect(testRealInputPush,&QPushButton::clicked,[=](){
         isRun = !isRun;

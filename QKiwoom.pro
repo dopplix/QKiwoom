@@ -18,7 +18,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     components/qjsontreewidget.cpp \
     dispatcher.cpp \
-    global.cpp \
     mainwidget.cpp \
     qflux/connectedwidget.cpp \
     qflux/dispatchercore.cpp \

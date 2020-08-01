@@ -14,10 +14,10 @@ class TrTab : public ConnectedWidget{
 
 public:
     explicit TrTab(QWidget *parent = nullptr);
+    QString getCurrentOptName();
     QJsonTreeWidget* trTree;
     QListWidget* trList;
     QTableWidget* trTable;
-    QJsonArray trDocArr;
     QJsonObjectMutex* store;
 
 signals:

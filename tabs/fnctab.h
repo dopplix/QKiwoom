@@ -17,7 +17,6 @@ public:
     QJsonTreeWidget* functionTree;
     QListWidget* functionList;
     QTableWidget* functionTable;
-    QJsonArray fncDocArr;
     QJsonObjectMutex* store;
     bool isRun = false;
 
