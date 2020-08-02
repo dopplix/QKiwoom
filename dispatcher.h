@@ -12,10 +12,10 @@ class Dispatcher : public DispatcherCore{
 
 public:
     Dispatcher();
-    QKoa* koa;
-    bool isKoaBusy = false;
+    QKoa* koa = new QKoa;
     QMysql* mysql = new QMysql;
     QTvUdfServer* udfServer = new QTvUdfServer;
+    bool isKoaBusy = false;
     QJsonObject getFncObj(QString fncName);
     QJsonObject getTrObj(QString optName);
     void initUdfWorker();
@@ -23,9 +23,9 @@ public:
     void routeKoaEvents();
     QJsonObject processTr(QJsonObject trObj);
     bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
-    QVariant callKoaFnc(QString fncName, QJsonArray argsArr);
-    QVariant callKoaTr(QString optName, QJsonArray argsArr);
-    QJsonObject requestKoaTr(QString optName, QJsonArray argsArr);
+    QVariant callKoaFnc(QString fncName, QJsonArray argArr);
+    QVariant callKoaTr(QString optName, QJsonArray argArr);
+    QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
 
 public slots:
     void dispatch(QString actionType, QJsonObject payload) override;

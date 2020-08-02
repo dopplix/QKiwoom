@@ -15,12 +15,37 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
     qDebug()<<method<<path<<urlStr;
     QJsonObject paramObj = QHttpUtil::urlToObj(urlStr);
     qDebug()<<"PARAM:"<<paramObj;
-    if(path=="/config"){
-        processConfig(res,paramObj);
-    }else if(path=="/symbols"){
-        processSymbol(res,paramObj);
-    }else if(path=="/history"){
-        processHistory(res,paramObj);
+    if(method=="HTTP_GET"){
+        if(path=="/config"){
+            processConfig(res,paramObj);
+        }else if(path=="/symbols"){
+            processSymbol(res,paramObj);
+        }else if(path=="/history"){
+            processHistory(res,paramObj);
+        }
+    }
+    else if(method=="HTTP_POST"){
+        connect(req,&QHttpRequest::data,[=](QByteArray body){
+            QJsonObject reqObj = QJsonDocument::fromJson(body).object();
+            QFuture<QJsonObject> future = QtConcurrent::run([=]{
+                qDebug()<<"1 CALL"<<QThread::currentThread();
+                QJsonObject* koaRetObj = new QJsonObject();
+                emit(kiwoomObjReq(reqObj,koaRetObj));
+                QJsonObject resultObj = koaRetObj->value("result").toObject();
+                return resultObj;
+            });
+            QFutureWatcher<QJsonObject>* futWatcher = new QFutureWatcher<QJsonObject>;
+            connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,[=]{
+                qDebug()<<"5 FUTURE WATCHER"<<QThread::currentThread();
+                QJsonObject resultObj = futWatcher->result();
+                res->setHeader("Access-Control-Allow-Origin", "*");
+                res->writeHead(200);
+                res->end(QJsonDocument(resultObj).toJson());
+            });
+            connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,futWatcher,&QFutureWatcher<QJsonObject>::deleteLater);
+            futWatcher->setFuture(future);
+
+        });
     }
 }
 void QTvUdfServer::processConfig(QHttpResponse *res, QJsonObject paramObj){

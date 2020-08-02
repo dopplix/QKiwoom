@@ -15,6 +15,9 @@ class QTvUdfServer : public QObject{
 public:
     explicit QTvUdfServer(QObject *parent = nullptr);
     QJsonObject tempKline;
+    QObject* worker;
+    QThread* thread;
+
 public slots:
     void handleRequest(QHttpRequest* req, QHttpResponse* res);
     void processConfig(QHttpResponse* res, QJsonObject paramObj);

@@ -7,7 +7,6 @@
 #include "global.h"
 
 Dispatcher::Dispatcher(){
-    koa = new QKoa;
     initUdfWorker();
     routeKoaEvents();
 }
@@ -21,6 +20,12 @@ void Dispatcher::initUdfWorker(){
     QThread* thread = new QThread;
     QObject* worker = new QObject;
     worker->moveToThread(thread);
+    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
+        QString optName = req.value("optName").toString();
+        QJsonArray argArr = req.value("argArr").toArray();
+        resObj->insert("result",requestKoaTr(optName,argArr));
+    },Qt::BlockingQueuedConnection);
+
 //    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
 //        qDebug()<<"2 WORKER THREAD"<<QThread::currentThread();
 //        qDebug()<<"3"<<req;
@@ -92,11 +97,11 @@ void Dispatcher::routeKoaEvents(){
         QString sScrNo = obj.value("sScrNo").toString();
         if(event=="onReceiveTrData"){
             if(sScrNo=="1100"){
-                //QJsonObject trObj = store->getValue("currentTr").toObject();
-//                QString optName = obj.value("sTrCode").toString();
-//                QJsonObject trObj = getTrObj(optName);
-//                QJsonObject finalResultObj = processTr(trObj);
-//                emit(trResultReceived(finalResultObj));
+                //QString optName=store.getValue("currentTr").toObject().value("optName").toString();
+                QString optName = obj.value("sTrCode").toString();
+                QJsonObject trObj = getTrObj(optName);
+                QJsonObject finalResultObj = processTr(trObj);
+                emit(trResultReceived(finalResultObj));
             }
 //            else if(sScrNo=="1200"){
 //                QString uuid = obj.value("sRQName").toString();
@@ -217,7 +222,7 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
     else if(actionType==ActionTypes::TrTab::CALL_CURRENT_TR){
         QString currentOptName = payload.value("currentOptName").toString();
         QJsonArray argArr = payload.value("args").toArray();
-        qDebug()<<"TR"<<callKoaTr(currentOptName,argArr);
+        qDebug()<<"TR"<<requestKoaTr(currentOptName,argArr);
     }
 }
 bool Dispatcher::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
@@ -243,7 +248,7 @@ bool Dispatcher::sendCondToMysql(QString condIndex, QString condName, QString as
     query.bindValue(":price",price);
     return query.exec();
 }
-QVariant Dispatcher::callKoaFnc(QString fncName, QJsonArray argsArr){
+QVariant Dispatcher::callKoaFnc(QString fncName, QJsonArray argArr){
     QJsonObject fncObj = getFncObj(fncName);
     QJsonArray paramArr = fncObj.value("params").toArray();
     int nParam = paramArr.size();
@@ -251,7 +256,7 @@ QVariant Dispatcher::callKoaFnc(QString fncName, QJsonArray argsArr){
     QStringList paramTypes;
     for(int i=0;i<nParam;i++){
         QString type = paramArr.at(i).toObject().value("paramType").toString();
-        QString argStr = argsArr.at(i).toString();
+        QString argStr = argArr.at(i).toString();
         if(type=="int"){
             argVariantList.append(argStr.toInt());
         }else if(type=="QString"){
@@ -265,24 +270,26 @@ QVariant Dispatcher::callKoaFnc(QString fncName, QJsonArray argsArr){
     char* fullNameBuffer = fullNameBytes.data();
     return koa->ax->dynamicCall(fullNameBuffer,argVariantList);
 }
-QVariant Dispatcher::callKoaTr(QString optName, QJsonArray argsArr){
+QVariant Dispatcher::callKoaTr(QString optName, QJsonArray argArr){
+    qDebug()<<"QVariant Dispatcher::callKoaTr(QString optName, QJsonArray argArr)"<<optName<<argArr;
     QJsonObject trObj = getTrObj(optName);
     QJsonArray inputArr = trObj.value("inputArr").toArray();
     int nArr = inputArr.size();
     for(int i=0;i<nArr;i++){
         QString inputName = inputArr.at(i).toString();
-        QString inputValue = argsArr.at(i).toString();
+        QString inputValue = argArr.at(i).toString();
         koa->setInputValue(inputName,inputValue);
     }
-    QString sRQName = "TrTab";
-    QString strCode = optName;
+    //QString sRQName = "TrTab";
+    QString sRQName = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    QString sTrCode = optName;
     int nPrevNext = 0;
     QString sScrNo = "1100";
-    QVariant result = koa->commRqData(sRQName,strCode,nPrevNext,sScrNo);
+    QVariant result = koa->commRqData(sRQName,sTrCode,nPrevNext,sScrNo);
     return result;
 }
-QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argsArr){
-    qDebug()<<"Busy1"<<isKoaBusy<<optName<<argsArr;
+QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
+    qDebug()<<"Busy1"<<isKoaBusy<<optName<<argArr;
     if(isKoaBusy){
         qDebug()<<"Busy";
         QJsonObject busyObj;
@@ -294,7 +301,9 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argsArr){
     QJsonObject* resultHolder = new QJsonObject;
     QTimer timer;
     QObject receiver;
-    callKoaTr(optName,argsArr);
+    qDebug()<<"1"<<"requestKoaTr";
+    callKoaTr(optName,argArr);
+    qDebug()<<"2"<<"requestKoaTr";
     connect(this,&Dispatcher::trResultReceived,&receiver,[resultHolder,loopPtr](QJsonObject resultObj){
         resultHolder->insert("result",resultObj);
         loopPtr->quit();
