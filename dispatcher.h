@@ -12,14 +12,15 @@ class Dispatcher : public DispatcherCore{
 
 public:
     Dispatcher();
-    QKoa* koa = new QKoa;
+    QKoa* koa;
+    bool isKoaBusy = false;
     QMysql* mysql = new QMysql;
     QTvUdfServer* udfServer = new QTvUdfServer;
     QJsonObject getFncObj(QString fncName);
     QJsonObject getTrObj(QString optName);
     void initUdfWorker();
     void initConditions();
-    void initKoaEventRouter();
+    void routeKoaEvents();
     QJsonObject processTr(QJsonObject trObj);
     bool sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price);
     QVariant callKoaFnc(QString fncName, QJsonArray argsArr);

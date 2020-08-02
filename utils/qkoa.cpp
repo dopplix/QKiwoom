@@ -30,7 +30,9 @@ int QKoa::commKwRqData(QString sArrCode, int bNext, int nCodeCount, int nTypeFla
     return ax->dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", params).toInt();
 }
 int QKoa::commRqData(QString sRQName, QString sTrCode, int nPrevNext, QString sScreenNo){
+    qDebug()<<"int QKoa::commRqData(QString sRQName, QString sTrCode, int nPrevNext, QString sScreenNo)";
     QVariantList params = {sRQName, sTrCode, nPrevNext, sScreenNo};
+    qDebug()<<params;
     return ax->dynamicCall("CommRqData(QString, QString, int, QString)", params).toInt();
 }
 void QKoa::commTerminate(){

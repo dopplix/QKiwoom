@@ -7,8 +7,9 @@
 #include "global.h"
 
 Dispatcher::Dispatcher(){
+    koa = new QKoa;
     initUdfWorker();
-    initKoaEventRouter();
+    routeKoaEvents();
 }
 QJsonObject Dispatcher::getFncObj(QString fncName){
     return QJsonUtils::findObjFromArrByKey(fncDocArr,"functionName",fncName);
@@ -84,7 +85,7 @@ void Dispatcher::initConditions(){
     }
     //conditionTab->initConditions(conditionArr);
 }
-void Dispatcher::initKoaEventRouter(){
+void Dispatcher::routeKoaEvents(){
     connect(koa,&QKoa::onMessageReceived,[=](QJsonObject obj){
         //logEdit->append(QJsonDocument(obj).toJson(QJsonDocument::Indented));
         QString event = obj.value("event").toString();
@@ -92,10 +93,10 @@ void Dispatcher::initKoaEventRouter(){
         if(event=="onReceiveTrData"){
             if(sScrNo=="1100"){
                 //QJsonObject trObj = store->getValue("currentTr").toObject();
-                QString optName = obj.value("sTrCode").toString();
-                QJsonObject trObj = getTrObj(optName);
-                QJsonObject finalResultObj = processTr(trObj);
-                emit(trResultReceived(finalResultObj));
+//                QString optName = obj.value("sTrCode").toString();
+//                QJsonObject trObj = getTrObj(optName);
+//                QJsonObject finalResultObj = processTr(trObj);
+//                emit(trResultReceived(finalResultObj));
             }
 //            else if(sScrNo=="1200"){
 //                QString uuid = obj.value("sRQName").toString();
@@ -216,7 +217,7 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
     else if(actionType==ActionTypes::TrTab::CALL_CURRENT_TR){
         QString currentOptName = payload.value("currentOptName").toString();
         QJsonArray argArr = payload.value("args").toArray();
-        qDebug()<<"TR"<<requestKoaTr(currentOptName,argArr);
+        qDebug()<<"TR"<<callKoaTr(currentOptName,argArr);
     }
 }
 bool Dispatcher::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
@@ -281,21 +282,34 @@ QVariant Dispatcher::callKoaTr(QString optName, QJsonArray argsArr){
     return result;
 }
 QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argsArr){
-    //QEventLoop* loop = new QEventLoop;
-    QSharedPointer<QEventLoop> loopPtr(new QEventLoop);
+    qDebug()<<"Busy1"<<isKoaBusy<<optName<<argsArr;
+    if(isKoaBusy){
+        qDebug()<<"Busy";
+        QJsonObject busyObj;
+        busyObj.insert("event","Dispatcher::requestKoaTr Koa Is Busy");
+        return busyObj;
+    }
+    isKoaBusy=true;
+    QEventLoop* loopPtr = new QEventLoop;
     QJsonObject* resultHolder = new QJsonObject;
+    QTimer timer;
+    QObject receiver;
     callKoaTr(optName,argsArr);
-    connect(this,&Dispatcher::trResultReceived,[resultHolder,loopPtr](QJsonObject resultObj){
+    connect(this,&Dispatcher::trResultReceived,&receiver,[resultHolder,loopPtr](QJsonObject resultObj){
         resultHolder->insert("result",resultObj);
         loopPtr->quit();
     });
-    QTimer::singleShot(5000,[resultHolder,loopPtr]{
+    QTimer::singleShot(5000,&receiver,[resultHolder,loopPtr]{
         QJsonObject errorObj;
-        errorObj.insert("event","Time Out Error");
+        errorObj.insert("event","Dispatcher::requestKoaTr Time Out Error");
         resultHolder->insert("result",errorObj);
         loopPtr->quit();
     });
     loopPtr->exec();
     QJsonObject result = resultHolder->value("result").toObject();
+    delete loopPtr;
+    delete resultHolder;
+    isKoaBusy=false;
+    qDebug()<<"Busy2"<<isKoaBusy;
     return result;
 }
