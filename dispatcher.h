@@ -15,6 +15,8 @@ public:
     QKoa* koa = new QKoa;
     QMysql* mysql = new QMysql;
     QTvUdfServer* udfServer = new QTvUdfServer;
+    QThread* udfThread;
+    QObject* udfWorker;
     bool isKoaBusy = false;
     QJsonObject getFncObj(QString fncName);
     QJsonObject getTrObj(QString optName);

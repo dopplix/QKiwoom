@@ -17,15 +17,26 @@ QJsonObject Dispatcher::getTrObj(QString optName){
     return QJsonUtils::findObjFromArrByKey(trDocArr,"optName",optName);
 }
 void Dispatcher::initUdfWorker(){
-    QThread* thread = new QThread;
-    QObject* worker = new QObject;
-    worker->moveToThread(thread);
-    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
+    udfThread = new QThread;
+    udfWorker = new QObject;
+    udfThread->start();
+    udfWorker->moveToThread(udfThread);
+    connect(udfWorker,&QObject::destroyed,udfThread,&QThread::quit);
+    connect(udfThread,&QThread::finished,udfThread,&QThread::deleteLater);
+    connect(udfServer,&QTvUdfServer::kiwoomTrReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
         QString optName = req.value("optName").toString();
         QJsonArray argArr = req.value("argArr").toArray();
-        resObj->insert("result",requestKoaTr(optName,argArr));
+        QJsonObject resultObj = requestKoaTr(optName,argArr);
+        resObj->insert("result",resultObj);
     },Qt::BlockingQueuedConnection);
-
+    connect(udfServer,&QTvUdfServer::kiwoomFncReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
+        QString fncName = req.value("fncName").toString();
+        QJsonArray argArr = req.value("argArr").toArray();
+        QVariant result = callKoaFnc(fncName,argArr);
+        QJsonObject resultObj;
+        resultObj.insert("returnValue",result.toJsonValue());
+        resObj->insert("result",resultObj);
+    },Qt::BlockingQueuedConnection);
 //    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
 //        qDebug()<<"2 WORKER THREAD"<<QThread::currentThread();
 //        qDebug()<<"3"<<req;
@@ -73,7 +84,7 @@ void Dispatcher::initUdfWorker(){
 //        });
 //        loop->exec();
 //    },Qt::BlockingQueuedConnection);
-    thread->start();
+
 }
 void Dispatcher::initConditions(){
     QString conditionStr = koa->getConditionNameList();

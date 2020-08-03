@@ -26,8 +26,9 @@ public slots:
     void sendResponse(QHttpResponse* res, QByteArray msg);
 
 signals:
+    void kiwoomTrReq(QJsonObject reqObj, QJsonObject* retObj);
+    void kiwoomFncReq(QJsonObject reqObj, QJsonObject* retObj);
     void kiwoomObjReq(QJsonObject reqObj, QJsonObject* retObj);
-
 };
 
 #endif // QTVUDFSERVER_H

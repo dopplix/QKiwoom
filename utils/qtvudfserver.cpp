@@ -6,7 +6,7 @@
 QTvUdfServer::QTvUdfServer(QObject *parent) : QObject(parent){
     QHttpServer *server = new QHttpServer(this);
     connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
-    server->listen(QHostAddress::Any,1989);
+    server->listen(QHostAddress::Any,1204);
 }
 void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
     QString method = req->methodString();
@@ -25,18 +25,31 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
         }
     }
     else if(method=="HTTP_POST"){
+        QString reqType;
+        if(path=="/tr"){
+            reqType = "TR";
+        }else if(path=="/fnc"){
+            reqType = "FNC";
+        }else{
+            res->writeHead(400);
+            res->end("Bad Request [Post Path : /tr or /fnc]");
+            return;
+        }
         connect(req,&QHttpRequest::data,[=](QByteArray body){
             QJsonObject reqObj = QJsonDocument::fromJson(body).object();
             QFuture<QJsonObject> future = QtConcurrent::run([=]{
-                qDebug()<<"1 CALL"<<QThread::currentThread();
                 QJsonObject* koaRetObj = new QJsonObject();
-                emit(kiwoomObjReq(reqObj,koaRetObj));
+                if(reqType=="TR"){
+                    emit(kiwoomTrReq(reqObj,koaRetObj));
+                }else if(reqType=="FNC"){
+                    emit(kiwoomFncReq(reqObj,koaRetObj));
+                }
                 QJsonObject resultObj = koaRetObj->value("result").toObject();
+                delete koaRetObj;
                 return resultObj;
             });
             QFutureWatcher<QJsonObject>* futWatcher = new QFutureWatcher<QJsonObject>;
             connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,[=]{
-                qDebug()<<"5 FUTURE WATCHER"<<QThread::currentThread();
                 QJsonObject resultObj = futWatcher->result();
                 res->setHeader("Access-Control-Allow-Origin", "*");
                 res->writeHead(200);
@@ -44,7 +57,6 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
             });
             connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,futWatcher,&QFutureWatcher<QJsonObject>::deleteLater);
             futWatcher->setFuture(future);
-
         });
     }
 }

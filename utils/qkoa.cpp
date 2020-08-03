@@ -30,9 +30,7 @@ int QKoa::commKwRqData(QString sArrCode, int bNext, int nCodeCount, int nTypeFla
     return ax->dynamicCall("CommKwRqData(QString, int, int, int, QString, QString)", params).toInt();
 }
 int QKoa::commRqData(QString sRQName, QString sTrCode, int nPrevNext, QString sScreenNo){
-    qDebug()<<"int QKoa::commRqData(QString sRQName, QString sTrCode, int nPrevNext, QString sScreenNo)";
     QVariantList params = {sRQName, sTrCode, nPrevNext, sScreenNo};
-    qDebug()<<params;
     return ax->dynamicCall("CommRqData(QString, QString, int, QString)", params).toInt();
 }
 void QKoa::commTerminate(){
@@ -304,8 +302,8 @@ void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealD
     //emit(onMessageReceived(obj));
 }
 void QKoa::onReceiveTrCondition(QString sScrNo, QString strCodeList, QString strConditionName, int nIndex, int nNext){
-    qDebug()<<"void QKoa::onReceiveTrCondition(QString sScrNo, QString strCodeList, QString strConditionName, int nIndex, int nNext)";
-    qDebug()<<"sScrNo"<<sScrNo<<"strCodeList"<<strCodeList<<"strConditionName"<<strConditionName<<"nIndex"<<nIndex<<"nNext"<<nNext;
+    //qDebug()<<"void QKoa::onReceiveTrCondition(QString sScrNo, QString strCodeList, QString strConditionName, int nIndex, int nNext)";
+    //qDebug()<<"sScrNo"<<sScrNo<<"strCodeList"<<strCodeList<<"strConditionName"<<strConditionName<<"nIndex"<<nIndex<<"nNext"<<nNext;
     QJsonObject obj;
     obj.insert("event","onReceiveTrCondition");
     obj.insert("sScrNo",sScrNo);
