@@ -6,8 +6,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-class QHttpUtil{
 
+class QHttpUtil{
+    
 public:
     QHttpUtil();
     static QJsonObject urlToObj(QString urlStr);
