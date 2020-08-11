@@ -15,14 +15,20 @@ class QTvUdfServer : public QObject{
 public:
     explicit QTvUdfServer(QObject *parent = nullptr);
     QJsonObject tempKline;
+    QObject* worker;
+    QThread* thread;
+
 public slots:
     void handleRequest(QHttpRequest* req, QHttpResponse* res);
-    void processHistory(QHttpResponse* res, QJsonObject paramsObject);
+    void processConfig(QHttpResponse* res, QJsonObject paramObj);
+    void processSymbol(QHttpResponse* res, QJsonObject paramObj);
+    void processHistory(QHttpResponse* res, QJsonObject paramObj);
     void sendResponse(QHttpResponse* res, QByteArray msg);
 
 signals:
+    void kiwoomTrReq(QJsonObject reqObj, QJsonObject* retObj);
+    void kiwoomFncReq(QJsonObject reqObj, QJsonObject* retObj);
     void kiwoomObjReq(QJsonObject reqObj, QJsonObject* retObj);
-
 };
 
 #endif // QTVUDFSERVER_H

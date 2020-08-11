@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+
 class QHttpUtil{
     
 public:

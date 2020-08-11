@@ -4,17 +4,20 @@
 #include <QPushButton>
 #include <QDebug>
 
-ConditionTab::ConditionTab(QWidget *parent) : QWidget(parent){
+ConditionTab::ConditionTab(QWidget *parent) : ConnectedWidget(parent){
+    //Declare
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QHBoxLayout* conditionLayout = new QHBoxLayout;
     QPushButton* loadConditionPush = new QPushButton("Load Condition");
-    conditionLayout->addWidget(conditionTree);
-    conditionLayout->addWidget(conditionList);
-    conditionLayout->addWidget(selectedConditionList);
-    conditionLayout->addWidget(targetAssetTable);
-    mainLayout->addWidget(loadConditionPush);
-    mainLayout->addLayout(conditionLayout);
+    //Render
     this->setLayout(mainLayout);
+        mainLayout->addWidget(loadConditionPush);
+        mainLayout->addLayout(conditionLayout);
+            conditionLayout->addWidget(conditionTree);
+            conditionLayout->addWidget(conditionList);
+            conditionLayout->addWidget(selectedConditionList);
+            conditionLayout->addWidget(targetAssetTable);
+    //Connect
     connect(loadConditionPush,&QPushButton::clicked,[=]{
          emit(requestCondition());
     });

@@ -7,8 +7,9 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include "components/qjsontreewidget.h"
+#include "qflux/connectedwidget.h"
 
-class AssetTab : public QWidget{
+class AssetTab : public ConnectedWidget{
     Q_OBJECT
 
 public:
@@ -21,6 +22,7 @@ signals:
     void requestAssetData();
 
 public slots:
+    void onStoreChanged(QJsonObject diffObj) override;
     void initAssets(QJsonArray docArr);
 
 };

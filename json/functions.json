@@ -1,58 +1,826 @@
-[{"returnType":"int","functionName":"CommConnect","params":[]
-},{"returnType":"QString","functionName":"CommGetData","params":[{"paramType":"QString","paramName":"sJongmokCode"},{"paramType":"QString","paramName":"sRealType"},{"paramType":"QString","paramName":"sFieldName"},{"paramType":"int","paramName":"nIndex"},{"paramType":"QString","paramName":"sInnerFieldName"}]
-},{"returnType":"int","functionName":"CommInvestRqData","params":[{"paramType":"QString","paramName":"sMarketGb"},{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sScreenNo"}]
-},{"returnType":"int","functionName":"CommKwRqData","params":[{"paramType":"QString","paramName":"sArrCode"},{"paramType":"int","paramName":"bNext"},{"paramType":"int","paramName":"nCodeCount"},{"paramType":"int","paramName":"nTypeFlag"},{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sScreenNo"}]
-},{"returnType":"int","functionName":"CommRqData","params":[{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nPrevNext"},{"paramType":"QString","paramName":"sScreenNo"}]
-},{"returnType":"void","functionName":"CommTerminate","params":[]
-},{"returnType":"void","functionName":"DisconnectRealData","params":[{"paramType":"QString","paramName":"sScnNo"}]
-},{"returnType":"QString","functionName":"GetAPIModulePath","params":[]
-},{"returnType":"QString","functionName":"GetActPriceList","params":[]
-},{"returnType":"QString","functionName":"GetBranchCodeName","params":[]
-},{"returnType":"QString","functionName":"GetChejanData","params":[{"paramType":"int","paramName":"nFid"}]
-},{"returnType":"QString","functionName":"GetCodeListByMarket","params":[{"paramType":"QString","paramName":"sMarket"}]
-},{"returnType":"QString","functionName":"GetCommData","params":[{"paramType":"QString","paramName":"strTrCode"},{"paramType":"QString","paramName":"strRecordName"},{"paramType":"int","paramName":"nIndex"},{"paramType":"QString","paramName":"strItemName"}]
-},{"returnType":"QVariant","functionName":"GetCommDataEx","params":[{"paramType":"QString","paramName":"strTrCode"},{"paramType":"QString","paramName":"strRecordName"}]
-},{"returnType":"QString","functionName":"GetCommRealData","params":[{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nFid"}]
-},{"returnType":"int","functionName":"GetConditionLoad","params":[]
-},{"returnType":"QString","functionName":"GetConditionNameList","params":[]
-},{"returnType":"int","functionName":"GetConnectState","params":[]
-},{"returnType":"int","functionName":"GetDataCount","params":[{"paramType":"QString","paramName":"strRecordName"}]
-},{"returnType":"QString","functionName":"GetFutureCodeByIndex","params":[{"paramType":"int","paramName":"nIndex"}]
-},{"returnType":"QString","functionName":"GetFutureList","params":[]
-},{"returnType":"QString","functionName":"GetLoginInfo","params":[{"paramType":"QString","paramName":"sTag"}]
-},{"returnType":"int","functionName":"GetMarketType","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMasterCodeName","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMasterConstruction","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMasterLastPrice","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"int","functionName":"GetMasterListedStockCnt","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMasterListedStockDate","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMasterStockState","params":[{"paramType":"QString","paramName":"sTrCode"}]
-},{"returnType":"QString","functionName":"GetMonthList","params":[]
-},{"returnType":"QString","functionName":"GetOptionATM","params":[]
-},{"returnType":"QString","functionName":"GetOptionCode","params":[{"paramType":"QString","paramName":"strActPrice"},{"paramType":"int","paramName":"nCp"},{"paramType":"QString","paramName":"strMonth"}]
-},{"returnType":"QString","functionName":"GetOptionCodeByActPrice","params":[{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nCp"},{"paramType":"int","paramName":"nTick"}]
-},{"returnType":"QString","functionName":"GetOptionCodeByMonth","params":[{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nCp"},{"paramType":"QString","paramName":"strMonth"}]
-},{"returnType":"QString","functionName":"GetOutputValue","params":[{"paramType":"QString","paramName":"strRecordName"},{"paramType":"int","paramName":"nRepeatIdx"},{"paramType":"int","paramName":"nItemIdx"}]
-},{"returnType":"int","functionName":"GetRepeatCnt","params":[{"paramType":"QString","paramName":"sTrCode"},{"paramType":"QString","paramName":"sRecordName"}]
-},{"returnType":"QString","functionName":"GetSActPriceList","params":[{"paramType":"QString","paramName":"strBaseAssetGb"}]
-},{"returnType":"QString","functionName":"GetSFOBasisAssetList","params":[]
-},{"returnType":"QString","functionName":"GetSFutureCodeByIndex","params":[{"paramType":"QString","paramName":"strBaseAssetCode"},{"paramType":"int","paramName":"nIndex"}]
-},{"returnType":"QString","functionName":"GetSFutureList","params":[{"paramType":"QString","paramName":"strBaseAssetCode"}]
-},{"returnType":"QString","functionName":"GetSMonthList","params":[{"paramType":"QString","paramName":"strBaseAssetGb"}]
-},{"returnType":"QString","functionName":"GetSOptionATM","params":[{"paramType":"QString","paramName":"strBaseAssetGb"}]
-},{"returnType":"QString","functionName":"GetSOptionCode","params":[{"paramType":"QString","paramName":"strBaseAssetGb"},{"paramType":"QString","paramName":"strActPrice"},{"paramType":"int","paramName":"nCp"},{"paramType":"QString","paramName":"strMonth"}]
-},{"returnType":"QString","functionName":"GetSOptionCodeByActPrice","params":[{"paramType":"QString","paramName":"strBaseAssetGb"},{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nCp"},{"paramType":"int","paramName":"nTick"}]
-},{"returnType":"QString","functionName":"GetSOptionCodeByMonth","params":[{"paramType":"QString","paramName":"strBaseAssetGb"},{"paramType":"QString","paramName":"sTrCode"},{"paramType":"int","paramName":"nCp"},{"paramType":"QString","paramName":"strMonth"}]
-},{"returnType":"QString","functionName":"GetThemeGroupCode","params":[{"paramType":"QString","paramName":"strThemeCode"}]
-},{"returnType":"QString","functionName":"GetThemeGroupList","params":[{"paramType":"int","paramName":"nType"}]
-},{"returnType":"QString","functionName":"KOA_Functions","params":[{"paramType":"QString","paramName":"sFunctionName"},{"paramType":"QString","paramName":"sParam"}]
-},{"returnType":"int","functionName":"SendCondition","params":[{"paramType":"QString","paramName":"strScrNo"},{"paramType":"QString","paramName":"strConditionName"},{"paramType":"int","paramName":"nIndex"},{"paramType":"int","paramName":"nSearch"}]
-},{"returnType":"void","functionName":"SendConditionStop","params":[{"paramType":"QString","paramName":"strScrNo"},{"paramType":"QString","paramName":"strConditionName"},{"paramType":"int","paramName":"nIndex"}]
-},{"returnType":"int","functionName":"SendOrder","params":[{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sScreenNo"},{"paramType":"QString","paramName":"sAccNo"},{"paramType":"int","paramName":"nOrderType"},{"paramType":"QString","paramName":"sCode"},{"paramType":"int","paramName":"nQty"},{"paramType":"int","paramName":"nPrice"},{"paramType":"QString","paramName":"sHogaGb"},{"paramType":"QString","paramName":"sOrgOrderNo"}]
-},{"returnType":"int","functionName":"SendOrderCredit","params":[{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sScreenNo"},{"paramType":"QString","paramName":"sAccNo"},{"paramType":"int","paramName":"nOrderType"},{"paramType":"QString","paramName":"sCode"},{"paramType":"int","paramName":"nQty"},{"paramType":"int","paramName":"nPrice"},{"paramType":"QString","paramName":"sHogaGb"},{"paramType":"QString","paramName":"sCreditGb"},{"paramType":"QString","paramName":"sLoanDate"},{"paramType":"QString","paramName":"sOrgOrderNo"}]
-},{"returnType":"int","functionName":"SendOrderFO","params":[{"paramType":"QString","paramName":"sRQName"},{"paramType":"QString","paramName":"sScreenNo"},{"paramType":"QString","paramName":"sAccNo"},{"paramType":"QString","paramName":"sCode"},{"paramType":"int","paramName":"lOrdKind"},{"paramType":"QString","paramName":"sSlbyTp"},{"paramType":"QString","paramName":"sOrdTp"},{"paramType":"int","paramName":"lQty"},{"paramType":"QString","paramName":"sPrice"},{"paramType":"QString","paramName":"sOrgOrdNo"}]
-},{"returnType":"int","functionName":"SetInfoData","params":[{"paramType":"QString","paramName":"sInfoData"}]
-},{"returnType":"void","functionName":"SetInputValue","params":[{"paramType":"QString","paramName":"sID"},{"paramType":"QString","paramName":"sValue"}]
-},{"returnType":"int","functionName":"SetOutputFID","params":[{"paramType":"QString","paramName":"sID"}]
-},{"returnType":"int","functionName":"SetRealReg","params":[{"paramType":"QString","paramName":"strScreenNo"},{"paramType":"QString","paramName":"strCodeList"},{"paramType":"QString","paramName":"strFidList"},{"paramType":"QString","paramName":"strOptType"}]
-},{"returnType":"void","functionName":"SetRealRemove","params":[{"paramType":"QString","paramName":"strScrNo"},{"paramType":"QString","paramName":"strDelCode"}]}]
+[
+  {
+    "returnType": "int",
+    "functionName": "CommConnect",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "CommGetData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sJongmokCode"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sRealType"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sFieldName"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sInnerFieldName"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "CommInvestRqData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sMarketGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "CommKwRqData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sArrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "bNext"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCodeCount"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nTypeFlag"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "CommRqData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nPrevNext"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      }
+    ]
+  },
+  {
+    "returnType": "void",
+    "functionName": "CommTerminate",
+    "params": []
+  },
+  {
+    "returnType": "void",
+    "functionName": "DisconnectRealData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sScnNo"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetAPIModulePath",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetActPriceList",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetBranchCodeName",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetChejanData",
+    "params": [
+      {
+        "paramType": "int",
+        "paramName": "nFid"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetCodeListByMarket",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sMarket"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetCommData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strTrCode"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strRecordName"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strItemName"
+      }
+    ]
+  },
+  {
+    "returnType": "QVariant",
+    "functionName": "GetCommDataEx",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strTrCode"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strRecordName"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetCommRealData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nFid"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetConditionLoad",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetConditionNameList",
+    "params": []
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetConnectState",
+    "params": []
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetDataCount",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strRecordName"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetFutureCodeByIndex",
+    "params": [
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetFutureList",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetLoginInfo",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTag"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetMarketType",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMasterCodeName",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMasterConstruction",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMasterLastPrice",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetMasterListedStockCnt",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMasterListedStockDate",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMasterStockState",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetMonthList",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetOptionATM",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetOptionCode",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strActPrice"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strMonth"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetOptionCodeByActPrice",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nTick"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetOptionCodeByMonth",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strMonth"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetOutputValue",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strRecordName"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nRepeatIdx"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nItemIdx"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "GetRepeatCnt",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sRecordName"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSActPriceList",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSFOBasisAssetList",
+    "params": []
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSFutureCodeByIndex",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSFutureList",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSMonthList",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSOptionATM",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSOptionCode",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strActPrice"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strMonth"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSOptionCodeByActPrice",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nTick"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetSOptionCodeByMonth",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strBaseAssetGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sTrCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nCp"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strMonth"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetThemeGroupCode",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strThemeCode"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "GetThemeGroupList",
+    "params": [
+      {
+        "paramType": "int",
+        "paramName": "nType"
+      }
+    ]
+  },
+  {
+    "returnType": "QString",
+    "functionName": "KOA_Functions",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sFunctionName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sParam"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SendCondition",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strScrNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strConditionName"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nSearch"
+      }
+    ]
+  },
+  {
+    "returnType": "void",
+    "functionName": "SendConditionStop",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strScrNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strConditionName"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nIndex"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SendOrder",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sAccNo"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nOrderType"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nQty"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nPrice"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sHogaGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sOrgOrderNo"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SendOrderCredit",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sAccNo"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nOrderType"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nQty"
+      },
+      {
+        "paramType": "int",
+        "paramName": "nPrice"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sHogaGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sCreditGb"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sLoanDate"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sOrgOrderNo"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SendOrderFO",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sRQName"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sScreenNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sAccNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sCode"
+      },
+      {
+        "paramType": "int",
+        "paramName": "lOrdKind"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sSlbyTp"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sOrdTp"
+      },
+      {
+        "paramType": "int",
+        "paramName": "lQty"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sPrice"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sOrgOrdNo"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SetInfoData",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sInfoData"
+      }
+    ]
+  },
+  {
+    "returnType": "void",
+    "functionName": "SetInputValue",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sID"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "sValue"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SetOutputFID",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "sID"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "functionName": "SetRealReg",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strScreenNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strCodeList"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strFidList"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strOptType"
+      }
+    ]
+  },
+  {
+    "returnType": "void",
+    "functionName": "SetRealRemove",
+    "params": [
+      {
+        "paramType": "QString",
+        "paramName": "strScrNo"
+      },
+      {
+        "paramType": "QString",
+        "paramName": "strDelCode"
+      }
+    ]
+  }
+]

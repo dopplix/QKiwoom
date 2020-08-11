@@ -5,9 +5,10 @@
 #include <QListWidget>
 #include <QTableWidget>
 #include <QJsonArray>
-#include "./components/qjsontreewidget.h"
+#include "components/qjsontreewidget.h"
+#include "qflux/connectedwidget.h"
 
-class ConditionTab : public QWidget{
+class ConditionTab : public ConnectedWidget{
     Q_OBJECT
 
 public:
@@ -26,7 +27,7 @@ signals:
 
 public slots:
     void initConditions(QJsonArray conditionArr);
-    void onStoreChanged(QJsonObject diffObj);
+    void onStoreChanged(QJsonObject diffObj) override;
 
 };
 

@@ -6,43 +6,58 @@
 #include <QEventLoop>
 #include <QTimer>
 #include "fnctab.h"
-#include "../utils/qjsonutils.h"
+#include "global.h"
 
-FncTab::FncTab(QWidget *parent) : QWidget(parent){
+FncTab::FncTab(QWidget *parent) : ConnectedWidget(parent){
+    //Declare
     QVBoxLayout* functionWidgetLayout = new QVBoxLayout;
     QHBoxLayout* functionLayout = new QHBoxLayout;
     QPushButton* reqFncPush = new QPushButton("Call Function");
     QPushButton* testRealInputPush = new QPushButton("Test Fnc");
-    functionLayout->addWidget(functionTree);
-    functionLayout->addWidget(functionList);
-    functionLayout->addWidget(functionTable);
-    functionWidgetLayout->addLayout(functionLayout);
-    functionWidgetLayout->addWidget(reqFncPush);
-    functionWidgetLayout->addWidget(testRealInputPush);
+    //Initialize
+    functionTree = new QJsonTreeWidget();
+        functionTree->appendJson(fncDocArr);
+        functionTree->expandAll();
+        for(int i=0;i<functionTree->columnCount();i++){
+            functionTree->resizeColumnToContents(i);
+        }
+    functionList = new QListWidget;
+        QStringList fncNameList;
+        for(int i=0;i<fncDocArr.size();i++){
+            fncNameList.append(fncDocArr.at(i).toObject().value("functionName").toString());
+        }
+        functionList->addItems(fncNameList);
+    functionTable = new QTableWidget;
+        functionTable->setColumnCount(2);
+        functionTable->setHorizontalHeaderLabels({"Type","Input"});
+        functionTable->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    //Render
     this->setLayout(functionWidgetLayout);
-    functionTable->setColumnCount(2);
-    functionTable->setHorizontalHeaderLabels({"Type","Input"});
-    fncDocArr = QJsonUtils::readJsonArrFromFile(":/doc/json/functions.json");
-    functionTree->appendJson(fncDocArr);
-    int nFncArr = fncDocArr.size();
-    QStringList fncNameList;
-    for(int i=0;i<nFncArr;i++){
-        fncNameList.append(fncDocArr.at(i).toObject().value("functionName").toString());
-    }
-    functionList->addItems(fncNameList);
+        functionWidgetLayout->addLayout(functionLayout);
+            functionLayout->addWidget(functionTree);
+            functionLayout->addWidget(functionList);
+            functionLayout->addWidget(functionTable);
+        functionWidgetLayout->addWidget(reqFncPush);
+        functionWidgetLayout->addWidget(testRealInputPush);
+    //Connect
     connect(functionList,&QListWidget::currentRowChanged,[=]{
-        int i = functionList->currentRow();
-        QJsonObject currentFnc = fncDocArr.at(i).toObject();
-        emit(updateCurrentFnc(currentFnc));
+        QString currentFncName = functionList->currentItem()->text();
+        QJsonObject payload;
+        payload.insert("currentFncName",currentFncName);
+        emit(action(ActionTypes::FncTab::CHANGE_CURRENT_FUNCTION,payload));
     });
     connect(reqFncPush,&QPushButton::clicked,[=]{
+        QString currentFncName = functionList->currentItem()->text();
         int nParam = functionTable->rowCount();
-        QStringList paramList;
+        QJsonArray argArr;
         for(int i=0;i<nParam;i++){
             QString arg = functionTable->item(i,1)->text();
-            paramList.append(arg);
+            argArr.append(arg);
         }
-        emit(callFnc(paramList));
+        QJsonObject payload;
+        payload.insert("currentFncName",currentFncName);
+        payload.insert("args",argArr);
+        emit(action(ActionTypes::FncTab::CALL_CURRENT_FUNCTION,payload));
     });
     connect(testRealInputPush,&QPushButton::clicked,[=](){
         isRun = !isRun;
@@ -58,11 +73,6 @@ FncTab::FncTab(QWidget *parent) : QWidget(parent){
             });
         }
     });
-    functionTree->expandAll();
-    for(int i=0;i<functionTree->columnCount();i++){
-        functionTree->resizeColumnToContents(i);
-    }
-    functionTable->setEditTriggers(QAbstractItemView::AllEditTriggers);
 }
 void FncTab::onStoreChanged(QJsonObject diffObj){
     if(diffObj.keys().contains("currentFnc")){

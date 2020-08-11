@@ -18,3 +18,10 @@ QString QJsonUtils::readStrFromFile(QString path){;
     file.close();
     return str;
 }
+QJsonObject QJsonUtils::findObjFromArrByKey(QJsonArray objArr, QString key, QJsonValue value){
+    for(QJsonValue v : objArr){
+        QJsonObject o = v.toObject();
+        if(o.value(key)==value) return o;
+    }
+    return QJsonObject();
+}

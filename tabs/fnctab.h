@@ -5,18 +5,18 @@
 #include <QListWidget>
 #include <QTableWidget>
 #include <QJsonArray>
-#include "../utils/qjsonobjectmutex.h"
-#include "../components/qjsontreewidget.h"
+#include "utils/qjsonobjectmutex.h"
+#include "components/qjsontreewidget.h"
+#include "qflux/connectedwidget.h"
 
-class FncTab : public QWidget{
+class FncTab : public ConnectedWidget{
     Q_OBJECT
 
 public:
     explicit FncTab(QWidget *parent = nullptr);
-    QJsonTreeWidget* functionTree = new QJsonTreeWidget();
-    QListWidget* functionList = new QListWidget;
-    QTableWidget* functionTable = new QTableWidget;
-    QJsonArray fncDocArr;
+    QJsonTreeWidget* functionTree;
+    QListWidget* functionList;
+    QTableWidget* functionTable;
     QJsonObjectMutex* store;
     bool isRun = false;
 

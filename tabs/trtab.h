@@ -4,19 +4,20 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QTableWidget>
-#include "../components/qjsontreewidget.h"
-#include "../utils/qjsonobjectmutex.h"
 #include <QJsonArray>
+#include "components/qjsontreewidget.h"
+#include "utils/qjsonobjectmutex.h"
+#include "qflux/connectedwidget.h"
 
-class TrTab : public QWidget{
+class TrTab : public ConnectedWidget{
     Q_OBJECT
 
 public:
     explicit TrTab(QWidget *parent = nullptr);
-    QJsonTreeWidget* trTree = new QJsonTreeWidget();
-    QListWidget* trList = new QListWidget;
-    QTableWidget* trTable = new QTableWidget;
-    QJsonArray trDocArr;
+    QString getCurrentOptName();
+    QJsonTreeWidget* trTree;
+    QListWidget* trList;
+    QTableWidget* trTable;
     QJsonObjectMutex* store;
 
 signals:
