@@ -6,7 +6,6 @@
 #include <QTableWidget>
 #include <QJsonArray>
 #include "components/qjsontreewidget.h"
-#include "utils/qjsonobjectmutex.h"
 #include "qflux/connectedwidget.h"
 
 class TrTab : public ConnectedWidget{
@@ -18,7 +17,6 @@ public:
     QJsonTreeWidget* trTree;
     QListWidget* trList;
     QTableWidget* trTable;
-    QJsonObjectMutex* store;
 
 signals:
     void updateCurrentTr(QJsonObject currentTr);

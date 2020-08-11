@@ -64,6 +64,9 @@ MainWidget::MainWidget(QWidget *parent) : ConnectedWidget(parent){
     connect(testPush,&QPushButton::clicked,[=]{
         emit(action(ActionTypes::TEST,QJsonObject()));
     });
+    connect(dispatcher,&Dispatcher::appendLog,[=](QJsonObject obj){
+        logEdit->append(QJsonDocument(obj).toJson(QJsonDocument::Indented));
+    });
     connectTabActions();
     initializeKoaEventRouter();
 }
@@ -75,28 +78,6 @@ void MainWidget::initializeKoaEventRouter(){
 
 }
 void MainWidget::connectTabActions(){
-//    connect(assetTab,&AssetTab::requestAssetData,[=]{
-//        QString codeStr = koa->getCodeListByMarket("0");
-//        QStringList codeList = codeStr.split(";");
-//        codeList.removeOne("");
-//        QJsonArray arr;
-//        for(QString code : codeList){
-//            QJsonObject obj;
-//            QString name = koa->getMasterCodeName(code);
-//            int nStock = koa->getMasterListedStockCnt(code);
-//            QString info = koa->getMasterConstruction(code);
-//            QString listedDate = koa->getMasterListedStockDate(code);
-//            QString lastPrice = koa->getMasterLastPrice(code);
-//            obj.insert("name",name);
-//            obj.insert("code",code);
-//            obj.insert("listedDate",listedDate);
-//            obj.insert("nStock",nStock);
-//            obj.insert("lastPrice",lastPrice);
-//            obj.insert("info",info);
-//            arr.append(obj);
-//        }
-//        assetTab->initAssets(arr);
-//    });
 //    connect(conditionTab,&ConditionTab::requestCondition,[=]{
 //        koa->getConditionLoad();
 //    });

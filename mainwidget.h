@@ -10,7 +10,6 @@
 #include <QTextEdit>
 #include <QFile>
 #include "utils/qkoa.h"
-#include "utils/qjsonobjectmutex.h"
 #include "utils/qmysql.h"
 #include "components/qjsontreewidget.h"
 #include "tabs/fnctab.h"

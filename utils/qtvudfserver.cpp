@@ -30,8 +30,8 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
             reqType = "TR";
         }else if(path=="/fnc"){
             reqType = "FNC";
-        }else if(path=="/custom"){
-            reqType = "CUSTOM";
+        }else if(path=="/assets"){
+            reqType = "ASSETS";
         }
         else{
             res->writeHead(400);
@@ -46,6 +46,8 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
                     emit(kiwoomTrReq(reqObj,koaRetObj));
                 }else if(reqType=="FNC"){
                     emit(kiwoomFncReq(reqObj,koaRetObj));
+                }else if(reqType=="ASSETS"){
+                    emit(kiwoomAssetReq(reqObj,koaRetObj));
                 }
                 QJsonObject resultObj = koaRetObj->value("result").toObject();
                 delete koaRetObj;

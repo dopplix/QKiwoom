@@ -28,6 +28,7 @@ public:
     QVariant callKoaFnc(QString fncName, QJsonArray argArr);
     QVariant callKoaTr(QString optName, QJsonArray argArr);
     QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
+    QJsonObject getAssets();
 
 public slots:
     void dispatch(QString actionType, QJsonObject payload) override;
@@ -35,6 +36,7 @@ public slots:
 signals:
     void historyReceived(QJsonObject resultObj);
     void trResultReceived(QJsonObject resultObj);
+    void appendLog(QJsonObject obj);
 
 };
 

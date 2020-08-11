@@ -29,7 +29,6 @@ SOURCES += \
     main.cpp \
     tabs/trtab.cpp \
     utils/qhttputil.cpp \
-    utils/qjsonobjectmutex.cpp \
     utils/qjsonutils.cpp \
     utils/qkoa.cpp \
     utils/qmysql.cpp \
@@ -51,7 +50,6 @@ HEADERS += \
     tabs/fnctab.h \
     tabs/trtab.h \
     utils/qhttputil.h \
-    utils/qjsonobjectmutex.h \
     utils/qjsonutils.h \
     utils/qkoa.h \
     utils/qmysql.h \

@@ -37,6 +37,20 @@ void Dispatcher::initUdfWorker(){
         resultObj.insert("returnValue",result.toJsonValue());
         resObj->insert("result",resultObj);
     },Qt::BlockingQueuedConnection);
+    connect(udfServer,&QTvUdfServer::kiwoomAssetReq,udfWorker,[=](QJsonObject req, QJsonObject* resObj){
+        QJsonArray assetCodes = req.value("assets").toArray();
+        QJsonObject assetObjs = getAssets();
+        if(assetCodes.size()==0){
+            resObj->insert("result",assetObjs);
+            return;
+        }
+        QJsonObject filteredObj = QJsonObject();
+        for(QJsonValue code : assetCodes){
+            QString key = code.toString();
+            filteredObj.insert(key,assetObjs.value(key));
+        }
+        resObj->insert("result",filteredObj);
+    },Qt::BlockingQueuedConnection);
 //    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
 //        qDebug()<<"2 WORKER THREAD"<<QThread::currentThread();
 //        qDebug()<<"3"<<req;
@@ -224,7 +238,9 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
         QString currentFncName = payload.value("currentFncName").toString();
         QJsonArray argArr = payload.value("args").toArray();
         QVariant result = callKoaFnc(currentFncName,argArr);
-        qDebug()<<result;
+        QJsonObject resultObj;
+        resultObj.insert("result",result.toJsonValue());
+        appendLog(resultObj);
     }
     else if(actionType==ActionTypes::TrTab::CHANGE_CURRENT_TR){
         QString currentOptName = payload.value("currentOptName").toString();
@@ -234,7 +250,12 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
     else if(actionType==ActionTypes::TrTab::CALL_CURRENT_TR){
         QString currentOptName = payload.value("currentOptName").toString();
         QJsonArray argArr = payload.value("args").toArray();
-        qDebug()<<"TR"<<requestKoaTr(currentOptName,argArr);
+        QJsonObject resultObj = requestKoaTr(currentOptName,argArr);
+        appendLog(resultObj);
+    }
+    else if(actionType==ActionTypes::AssetTab::REQUEST_ASSET_LIST){
+        QJsonObject assets = getAssets();
+        appendLog(assets);
     }
 }
 bool Dispatcher::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
@@ -333,4 +354,21 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
     isKoaBusy=false;
     qDebug()<<"Busy2"<<isKoaBusy;
     return result;
+}
+QJsonObject Dispatcher::getAssets(){
+    QString codeStr = koa->getCodeListByMarket("0");
+    QStringList codeList = codeStr.split(";");
+    codeList.removeOne("");
+    QJsonObject assets;
+    for(QString code : codeList){
+        QJsonObject obj;
+        obj.insert("code",code);
+        obj.insert("name",koa->getMasterCodeName(code));
+        obj.insert("listedDate",koa->getMasterListedStockDate(code));
+        obj.insert("nStock",koa->getMasterListedStockCnt(code));
+        obj.insert("lastPrice",koa->getMasterLastPrice(code));
+        obj.insert("info",koa->getMasterConstruction(code));
+        assets.insert(code,obj);
+    }
+    return assets;
 }

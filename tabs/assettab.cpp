@@ -1,6 +1,7 @@
 #include "assettab.h"
 #include <QVBoxLayout>
 #include <QPushButton>
+#include "global.h"
 
 AssetTab::AssetTab(QWidget *parent) : ConnectedWidget(parent){
     //Declare
@@ -15,7 +16,7 @@ AssetTab::AssetTab(QWidget *parent) : ConnectedWidget(parent){
             assetLayout->addWidget(assetList);
     //Connect
     connect(requestAssetPush,&QPushButton::clicked,[=]{
-        emit(requestAssetData());
+        emit(action(ActionTypes::AssetTab::REQUEST_ASSET_LIST,QJsonObject()));
     });
 }
 void AssetTab::onStoreChanged(QJsonObject diffObj){

@@ -5,7 +5,6 @@
 #include <QListWidget>
 #include <QTableWidget>
 #include <QJsonArray>
-#include "utils/qjsonobjectmutex.h"
 #include "components/qjsontreewidget.h"
 #include "qflux/connectedwidget.h"
 
@@ -17,7 +16,6 @@ public:
     QJsonTreeWidget* functionTree;
     QListWidget* functionList;
     QTableWidget* functionTable;
-    QJsonObjectMutex* store;
     bool isRun = false;
 
 signals:

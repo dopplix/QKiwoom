@@ -28,6 +28,7 @@ public slots:
 signals:
     void kiwoomTrReq(QJsonObject reqObj, QJsonObject* retObj);
     void kiwoomFncReq(QJsonObject reqObj, QJsonObject* retObj);
+    void kiwoomAssetReq(QJsonObject reqObj, QJsonObject* retObj);
     void kiwoomObjReq(QJsonObject reqObj, QJsonObject* retObj);
 };
 
