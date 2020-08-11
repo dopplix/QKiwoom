@@ -102,13 +102,14 @@ void Dispatcher::initConditions(){
     //conditionTab->initConditions(conditionArr);
 }
 void Dispatcher::routeKoaEvents(){
+    qDebug()<<"void Dispatcher::routeKoaEvents()";
     connect(koa,&QKoa::onMessageReceived,[=](QJsonObject obj){
+        qDebug()<<"connect(koa,&QKoa::onMessageReceived,[=](QJsonObject obj)"<<obj;
         //logEdit->append(QJsonDocument(obj).toJson(QJsonDocument::Indented));
         QString event = obj.value("event").toString();
         QString sScrNo = obj.value("sScrNo").toString();
         if(event=="onReceiveTrData"){
             if(sScrNo=="1100"){
-                //QString optName=store.getValue("currentTr").toObject().value("optName").toString();
                 QString optName = obj.value("sTrCode").toString();
                 QJsonObject trObj = getTrObj(optName);
                 QJsonObject finalResultObj = processTr(trObj);
@@ -312,10 +313,9 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
     QJsonObject* resultHolder = new QJsonObject;
     QTimer timer;
     QObject receiver;
-    qDebug()<<"1"<<"requestKoaTr";
-    callKoaTr(optName,argArr);
     qDebug()<<"2"<<"requestKoaTr";
     connect(this,&Dispatcher::trResultReceived,&receiver,[resultHolder,loopPtr](QJsonObject resultObj){
+        qDebug()<<"3"<<"requestKoaTr";
         resultHolder->insert("result",resultObj);
         loopPtr->quit();
     });
@@ -325,6 +325,7 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
         resultHolder->insert("result",errorObj);
         loopPtr->quit();
     });
+    callKoaTr(optName,argArr);
     loopPtr->exec();
     QJsonObject result = resultHolder->value("result").toObject();
     delete loopPtr;
