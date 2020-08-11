@@ -23,81 +23,81 @@ void Dispatcher::initUdfWorker(){
     udfWorker->moveToThread(udfThread);
     connect(udfWorker,&QObject::destroyed,udfThread,&QThread::quit);
     connect(udfThread,&QThread::finished,udfThread,&QThread::deleteLater);
-    connect(udfServer,&QTvUdfServer::kiwoomTrReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
-        QString optName = req.value("optName").toString();
-        QJsonArray argArr = req.value("argArr").toArray();
-        QJsonObject resultObj = requestKoaTr(optName,argArr);
-        resObj->insert("result",resultObj);
-    },Qt::BlockingQueuedConnection);
-    connect(udfServer,&QTvUdfServer::kiwoomFncReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
-        QString fncName = req.value("fncName").toString();
-        QJsonArray argArr = req.value("argArr").toArray();
-        QVariant result = callKoaFnc(fncName,argArr);
-        QJsonObject resultObj;
-        resultObj.insert("returnValue",result.toJsonValue());
-        resObj->insert("result",resultObj);
-    },Qt::BlockingQueuedConnection);
-    connect(udfServer,&QTvUdfServer::kiwoomAssetReq,udfWorker,[=](QJsonObject req, QJsonObject* resObj){
-        QJsonArray assetCodes = req.value("assets").toArray();
-        QJsonObject assetObjs = getAssets();
-        if(assetCodes.size()==0){
-            resObj->insert("result",assetObjs);
-            return;
-        }
-        QJsonObject filteredObj = QJsonObject();
-        for(QJsonValue code : assetCodes){
-            QString key = code.toString();
-            filteredObj.insert(key,assetObjs.value(key));
-        }
-        resObj->insert("result",filteredObj);
-    },Qt::BlockingQueuedConnection);
-//    connect(udfServer,&QTvUdfServer::kiwoomObjReq,worker,[=](QJsonObject req,QJsonObject* resObj){
-//        qDebug()<<"2 WORKER THREAD"<<QThread::currentThread();
-//        qDebug()<<"3"<<req;
-//        koa->setInputValue(krMapObj.value("assetCode").toString(),"000060");
-//        koa->setInputValue(krMapObj.value("targetDate").toString(),"20200716");
-//        koa->setInputValue(krMapObj.value("modifiedPriceIndex").toString(),"0");
-//        koa->commRqData("UDF","OPT10081",0,"1989");
-//        QEventLoop* loop = new QEventLoop;
-//        connect(this,&Dispatcher::historyReceived,[=](QJsonObject resultObj){
-//            QJsonArray klineArr = resultObj.value("multi").toArray();
-//            QJsonArray tArr;
-//            QJsonArray oArr;
-//            QJsonArray hArr;
-//            QJsonArray lArr;
-//            QJsonArray cArr;
-//            QJsonArray vArr;
-//            for(QJsonValue v : klineArr){
-//                QJsonObject obj = v.toObject();
-//                QString date = obj.value(krMapObj.value("date").toString()).toString();
-//                QString open = obj.value(krMapObj.value("open").toString()).toString();
-//                QString high = obj.value(krMapObj.value("high").toString()).toString();
-//                QString low = obj.value(krMapObj.value("low").toString()).toString();
-//                QString close = obj.value(krMapObj.value("close").toString()).toString();
-//                QString volume = obj.value(krMapObj.value("volume").toString()).toString();
-//                tArr.insert(0,double(QTimeUtil::kiwoomToDt(date).toTime_t()));
-//                oArr.insert(0,open.toDouble());
-//                hArr.insert(0,high.toDouble());
-//                lArr.insert(0,low.toDouble());
-//                cArr.insert(0,close.toDouble());
-//                vArr.insert(0,volume.toDouble());
-//            }
-//            resObj->insert("s","ok");
-//            resObj->insert("t",tArr);
-//            resObj->insert("o",oArr);
-//            resObj->insert("h",hArr);
-//            resObj->insert("l",lArr);
-//            resObj->insert("c",cArr);
-//            resObj->insert("v",vArr);
-//            QTimer::singleShot(0,loop,&QEventLoop::quit);
-//        });
-//        QTimer::singleShot(5000,loop,[=]{
-//            resObj->insert("s","error");
-//            resObj->insert("errmsg","Time Out");
-//            QTimer::singleShot(0,loop,&QEventLoop::quit);
-//        });
-//        loop->exec();
+//    connect(udfServer,&QTvUdfServer::kiwoomTrReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
+//        QString optName = req.value("optName").toString();
+//        QJsonArray argArr = req.value("argArr").toArray();
+//        QJsonObject resultObj = requestKoaTr(optName,argArr);
+//        resObj->insert("result",resultObj);
 //    },Qt::BlockingQueuedConnection);
+//    connect(udfServer,&QTvUdfServer::kiwoomFncReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
+//        QString fncName = req.value("fncName").toString();
+//        QJsonArray argArr = req.value("argArr").toArray();
+//        QVariant result = callKoaFnc(fncName,argArr);
+//        QJsonObject resultObj;
+//        resultObj.insert("returnValue",result.toJsonValue());
+//        resObj->insert("result",resultObj);
+//    },Qt::BlockingQueuedConnection);
+//    connect(udfServer,&QTvUdfServer::kiwoomAssetReq,udfWorker,[=](QJsonObject req, QJsonObject* resObj){
+//        QJsonArray assetCodes = req.value("assets").toArray();
+//        QJsonObject assetObjs = getAssets();
+//        if(assetCodes.size()==0){
+//            resObj->insert("result",assetObjs);
+//            return;
+//        }
+//        QJsonObject filteredObj = QJsonObject();
+//        for(QJsonValue code : assetCodes){
+//            QString key = code.toString();
+//            filteredObj.insert(key,assetObjs.value(key));
+//        }
+//        resObj->insert("result",filteredObj);
+//    },Qt::BlockingQueuedConnection);
+
+//    connect(udfServer,&QTvUdfServer::kiwoomBarReq,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
+//        QJsonArray argsArr;
+//        argsArr.append("000060");
+//        argsArr.append("20200810");
+//        argsArr.append("0");
+//        QJsonObject barObj = requestKoaTr("OPT10081",argsArr);
+//        QJsonObject parsedBarObj = parseBarObj(barObj);
+//        resObj->insert("result",parsedBarObj);
+//    },Qt::BlockingQueuedConnection);
+    connect(udfServer,&QTvUdfServer::requestKiwoomData,udfWorker,[=](QJsonObject req,QJsonObject* resObj){
+        QString reqType = req.value("reqType").toString();
+        if(reqType=="POST_TR"){
+            QString optName = req.value("optName").toString();
+            QJsonArray argArr = req.value("argArr").toArray();
+            QJsonObject resultObj = requestKoaTr(optName,argArr);
+            resObj->insert("result",resultObj);
+        }else if(reqType=="POST_FNC"){
+            QString fncName = req.value("fncName").toString();
+            QJsonArray argArr = req.value("argArr").toArray();
+            QVariant result = callKoaFnc(fncName,argArr);
+            QJsonObject resultObj;
+            resultObj.insert("returnValue",result.toJsonValue());
+            resObj->insert("result",resultObj);
+        }else if(reqType=="POST_ASSETS"){
+            QJsonArray assetCodes = req.value("assets").toArray();
+            QJsonObject assetObjs = getAssets();
+            if(assetCodes.size()==0){
+                resObj->insert("result",assetObjs);
+                return;
+            }
+            QJsonObject filteredObj = QJsonObject();
+            for(QJsonValue code : assetCodes){
+                QString key = code.toString();
+                filteredObj.insert(key,assetObjs.value(key));
+            }
+            resObj->insert("result",filteredObj);
+        }else if(reqType=="GET_HISTORY"){
+            QJsonArray argsArr;
+            argsArr.append("000060");
+            argsArr.append("20200810");
+            argsArr.append("0");
+            QJsonObject barObj = requestKoaTr("OPT10081",argsArr);
+            QJsonObject parsedBarObj = parseBarObj(barObj);
+            resObj->insert("result",parsedBarObj);
+        }
+    },Qt::BlockingQueuedConnection);
 
 }
 void Dispatcher::initConditions(){
@@ -255,6 +255,7 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
     }
     else if(actionType==ActionTypes::AssetTab::REQUEST_ASSET_LIST){
         QJsonObject assets = getAssets();
+        store.setValue("assetDoc",assets);
         appendLog(assets);
     }
 }
@@ -371,4 +372,37 @@ QJsonObject Dispatcher::getAssets(){
         assets.insert(code,obj);
     }
     return assets;
+}
+QJsonObject Dispatcher::parseBarObj(QJsonObject barObj){
+    QJsonArray klineArr = barObj.value("multi").toArray();
+    QJsonArray tArr;
+    QJsonArray oArr;
+    QJsonArray hArr;
+    QJsonArray lArr;
+    QJsonArray cArr;
+    QJsonArray vArr;
+    for(QJsonValue v : klineArr){
+        QJsonObject obj = v.toObject();
+        QString date = obj.value(krMapObj.value("date").toString()).toString();
+        QString open = obj.value(krMapObj.value("open").toString()).toString();
+        QString high = obj.value(krMapObj.value("high").toString()).toString();
+        QString low = obj.value(krMapObj.value("low").toString()).toString();
+        QString close = obj.value(krMapObj.value("close").toString()).toString();
+        QString volume = obj.value(krMapObj.value("volume").toString()).toString();
+        tArr.insert(0,double(QTimeUtil::kiwoomToDt(date).toTime_t()));
+        oArr.insert(0,open.toDouble());
+        hArr.insert(0,high.toDouble());
+        lArr.insert(0,low.toDouble());
+        cArr.insert(0,close.toDouble());
+        vArr.insert(0,volume.toDouble());
+    }
+    QJsonObject resObj;
+    resObj.insert("s","ok");
+    resObj.insert("t",tArr);
+    resObj.insert("o",oArr);
+    resObj.insert("h",hArr);
+    resObj.insert("l",lArr);
+    resObj.insert("c",cArr);
+    resObj.insert("v",vArr);
+    return resObj;
 }

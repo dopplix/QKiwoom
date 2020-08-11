@@ -20,14 +20,17 @@ AssetTab::AssetTab(QWidget *parent) : ConnectedWidget(parent){
     });
 }
 void AssetTab::onStoreChanged(QJsonObject diffObj){
-
+    if(diffObj.keys().contains("assetDoc")){
+        QJsonObject assetDocObj = diffObj.value("assetDoc").toObject();
+        assetTree->clear();
+        assetTree->appendJson(assetDocObj);
+        initAssetList(assetDocObj);
+    }
 }
-void AssetTab::initAssets(QJsonArray docArr){
-    assetDocArr = docArr;
-    assetTree->appendJson(docArr);
+void AssetTab::initAssetList(QJsonObject docObj){
     QStringList assetStrList;
-    for(QJsonValue assetValue : assetDocArr){
-        QJsonObject assetObj = assetValue.toObject();
+    for(QString key : docObj.keys()){
+        QJsonObject assetObj = docObj.value(key).toObject();
         QString name = assetObj.value("name").toString();
         QString code = assetObj.value("code").toString();
         assetStrList.append(code+" "+name);

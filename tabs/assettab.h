@@ -16,14 +16,13 @@ public:
     explicit AssetTab(QWidget *parent = nullptr);
     QJsonTreeWidget* assetTree = new QJsonTreeWidget;
     QListWidget* assetList = new QListWidget;
-    QJsonArray assetDocArr;
 
 signals:
     void requestAssetData();
 
 public slots:
     void onStoreChanged(QJsonObject diffObj) override;
-    void initAssets(QJsonArray docArr);
+    void initAssetList(QJsonObject docObj);
 
 };
 

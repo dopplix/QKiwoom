@@ -29,6 +29,7 @@ public:
     QVariant callKoaTr(QString optName, QJsonArray argArr);
     QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
     QJsonObject getAssets();
+    QJsonObject parseBarObj(QJsonObject barObj);
 
 public slots:
     void dispatch(QString actionType, QJsonObject payload) override;

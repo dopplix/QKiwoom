@@ -17,6 +17,7 @@ public:
     QJsonObject tempKline;
     QObject* worker;
     QThread* thread;
+    void handleBlockedKiwoomRequest(QJsonObject reqObj, QHttpResponse* res);
 
 public slots:
     void handleRequest(QHttpRequest* req, QHttpResponse* res);
@@ -26,10 +27,7 @@ public slots:
     void sendResponse(QHttpResponse* res, QByteArray msg);
 
 signals:
-    void kiwoomTrReq(QJsonObject reqObj, QJsonObject* retObj);
-    void kiwoomFncReq(QJsonObject reqObj, QJsonObject* retObj);
-    void kiwoomAssetReq(QJsonObject reqObj, QJsonObject* retObj);
-    void kiwoomObjReq(QJsonObject reqObj, QJsonObject* retObj);
+    void requestKiwoomData(QJsonObject reqObj, QJsonObject* retObj);
 };
 
 #endif // QTVUDFSERVER_H
