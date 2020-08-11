@@ -30,7 +30,10 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
             reqType = "TR";
         }else if(path=="/fnc"){
             reqType = "FNC";
-        }else{
+        }else if(path=="/custom"){
+            reqType = "CUSTOM";
+        }
+        else{
             res->writeHead(400);
             res->end("Bad Request [Post Path : /tr or /fnc]");
             return;
