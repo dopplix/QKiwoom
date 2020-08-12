@@ -3,10 +3,10 @@
 #include <QtConcurrent>
 #include <QThread>
 
-QTvUdfServer::QTvUdfServer(QObject *parent) : QObject(parent){
+QTvUdfServer::QTvUdfServer(quint16 port, QObject *parent) : QObject(parent){
     QHttpServer *server = new QHttpServer(this);
     connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
-    server->listen(QHostAddress::Any,1204);
+    server->listen(QHostAddress::Any, port);
 }
 
 void QTvUdfServer::handleBlockedKiwoomRequest(QJsonObject reqObj, QHttpResponse *res){

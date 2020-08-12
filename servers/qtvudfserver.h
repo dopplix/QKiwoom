@@ -13,7 +13,7 @@ class QTvUdfServer : public QObject{
     Q_OBJECT
 
 public:
-    explicit QTvUdfServer(QObject *parent = nullptr);
+    explicit QTvUdfServer(quint16 port, QObject *parent = nullptr);
     QJsonObject tempKline;
     QObject* worker;
     QThread* thread;
@@ -28,6 +28,7 @@ public slots:
 
 signals:
     void requestKiwoomData(QJsonObject reqObj, QJsonObject* retObj);
+
 };
 
 #endif // QTVUDFSERVER_H

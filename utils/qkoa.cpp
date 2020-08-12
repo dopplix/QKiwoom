@@ -292,13 +292,14 @@ void QKoa::onReceiveRealCondition(QString sTrCode, QString strType, QString strC
     emit(onMessageReceived(obj));
 }
 void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData){
-    //qDebug()<<"void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData)";
-    //qDebug()<<"sRealKey"<<sRealKey<<"sRealType"<<sRealType<<"sRealData"<<sRealData;
+    qDebug()<<"void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData)";
+    qDebug()<<"sRealKey"<<sRealKey<<"sRealType"<<sRealType<<"sRealData"<<sRealData;
     QJsonObject obj;
     obj.insert("event","onReceiveRealData");
     obj.insert("sRealKey",sRealKey);
     obj.insert("sRealType",sRealType);
     obj.insert("sRealData",sRealData);
+    qDebug()<<"GET_COMM_REAL"<<this->getCommRealData(sRealKey,43);
     //emit(onMessageReceived(obj));
 }
 void QKoa::onReceiveTrCondition(QString sScrNo, QString strCodeList, QString strConditionName, int nIndex, int nNext){

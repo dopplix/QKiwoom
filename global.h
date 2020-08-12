@@ -11,5 +11,7 @@ extern Dispatcher* dispatcher;
 extern QJsonArray trDocArr;
 extern QJsonArray fncDocArr;
 extern QJsonObject krMapObj;
+extern QJsonObject fidDocOvj;
+
 
 #endif // GLOBAL_H

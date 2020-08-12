@@ -3,5 +3,6 @@
         <file>json/functions.json</file>
         <file>json/tr.json</file>
         <file>json/krmap.json</file>
+        <file>json/fid.json</file>
     </qresource>
 </RCC>

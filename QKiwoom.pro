@@ -1,4 +1,4 @@
-QT       += core gui axcontainer sql network concurrent
+QT       += core gui axcontainer sql network concurrent websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,6 +22,7 @@ SOURCES += \
     qflux/connectedwidget.cpp \
     qflux/dispatchercore.cpp \
     qflux/store/qjsonobjectmutex.cpp \
+    servers/bmwsserver.cpp \
     tabs/assettab.cpp \
     tabs/conditiontab.cpp \
     tabs/fnctab.cpp \
@@ -33,7 +34,7 @@ SOURCES += \
     utils/qkoa.cpp \
     utils/qmysql.cpp \
     utils/qtimeutil.cpp \
-    utils/qtvudfserver.cpp \
+    servers/qtvudfserver.cpp \
 
 HEADERS += \
     actionTypes.h \
@@ -44,6 +45,7 @@ HEADERS += \
     qflux/connectedwidget.h \
     qflux/dispatchercore.h \
     qflux/store/qjsonobjectmutex.h \
+    servers/bmwsserver.h \
     tabs/assettab.h \
     tabs/conditiontab.h \
     tabs/fnctab.h \
@@ -54,7 +56,7 @@ HEADERS += \
     utils/qkoa.h \
     utils/qmysql.h \
     utils/qtimeutil.h \
-    utils/qtvudfserver.h
+    servers/qtvudfserver.h
 
 INCLUDEPATH += $$PWD/qhttpserver/qhttpserver/src
 LIBS += -L$$PWD/qhttpserver/lib -lqhttpserverd

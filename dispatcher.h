@@ -5,7 +5,8 @@
 #include "qflux/dispatchercore.h"
 #include "utils/qkoa.h"
 #include "utils/qmysql.h"
-#include "utils/qtvudfserver.h"
+#include "servers/qtvudfserver.h"
+#include "servers/bmwsserver.h"
 
 class Dispatcher : public DispatcherCore{
     Q_OBJECT
@@ -14,7 +15,8 @@ public:
     Dispatcher();
     QKoa* koa = new QKoa;
     QMysql* mysql = new QMysql;
-    QTvUdfServer* udfServer = new QTvUdfServer;
+    QTvUdfServer* udfServer = new QTvUdfServer(1204);
+    BmWsServer* bmWsServer = new BmWsServer(1989);
     QThread* udfThread;
     QObject* udfWorker;
     bool isKoaBusy = false;

@@ -16,7 +16,6 @@
 #include "tabs/trtab.h"
 #include "tabs/assettab.h"
 #include "tabs/conditiontab.h"
-#include "utils/qtvudfserver.h"
 #include "qflux/connectedwidget.h"
 
 class MainWidget : public ConnectedWidget{
