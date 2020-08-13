@@ -16,6 +16,8 @@ public:
     static QJsonObject readJsonObjFromFile(QString path);
     static QString readStrFromFile(QString path);
     static QJsonObject findObjFromArrByKey(QJsonArray objArr, QString key, QJsonValue value);
+    static QString objToStr(QJsonObject obj);
+    static QString arrToStr(QJsonArray arr);
 
 signals:
 

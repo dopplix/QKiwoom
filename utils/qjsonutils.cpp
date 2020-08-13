@@ -25,3 +25,9 @@ QJsonObject QJsonUtils::findObjFromArrByKey(QJsonArray objArr, QString key, QJso
     }
     return QJsonObject();
 }
+QString QJsonUtils::objToStr(QJsonObject obj){
+    return QJsonDocument(obj).toJson(QJsonDocument::Indented);
+}
+QString QJsonUtils::arrToStr(QJsonArray arr){
+    return QJsonDocument(arr).toJson(QJsonDocument::Indented);
+}

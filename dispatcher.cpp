@@ -107,6 +107,22 @@ void Dispatcher::routeKoaEvents(){
             koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
             koa->commRqData(uuid,"OPT10003",0,"1200");
         }
+        else if(event=="onReceiveRealData"){
+            qDebug()<<obj;
+            QString assetCode = obj.value("sRealKey").toString();
+            QString type = obj.value("sRealType").toString();
+            QJsonObject fidObj = fidDocObj.value(type).toObject();
+            QJsonObject resultObj;
+            for(QString fid : fidObj.keys()){
+                QString key = fidObj.value(fid).toString();
+                QString data = koa->getCommRealData(assetCode,fid.toInt());
+                resultObj.insert(key,data);
+            }
+            resultObj.insert("code",assetCode);
+            resultObj.insert("type",type);
+            resultObj.insert("asset",koa->getMasterCodeName(assetCode));
+            bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+        }
     });
 }
 QJsonObject Dispatcher::processTr(QJsonObject trObj){

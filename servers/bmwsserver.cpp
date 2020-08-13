@@ -1,5 +1,4 @@
 #include "bmwsserver.h"
-#include "global.h"
 #include <QDebug>
 
 BmWsServer::BmWsServer(quint16 port, QObject *parent) : QObject(parent){
