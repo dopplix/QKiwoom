@@ -21,9 +21,9 @@ public:
 
 public slots:
     void handleRequest(QHttpRequest* req, QHttpResponse* res);
-    void processConfig(QHttpResponse* res, QJsonObject paramObj);
-    void processSymbol(QHttpResponse* res, QJsonObject paramObj);
-    void processHistory(QHttpResponse* res, QJsonObject paramObj);
+    void handleConfig(QHttpResponse* res, QJsonObject paramObj);
+    void handleSymbol(QHttpResponse* res, QJsonObject paramObj);
+    void handleHistory(QHttpResponse* res, QJsonObject paramObj);
     void sendResponse(QHttpResponse* res, QByteArray msg);
 
 signals:

@@ -33,7 +33,7 @@ void BmWsServer::socketDisconnected(){
     }
 }
 void BmWsServer::sendMessageToAllClient(QString message){
-    qDebug()<<"void BmWsServer::sendMessageToAllClient(QString message)";
+    //qDebug()<<"void BmWsServer::sendMessageToAllClient(QString message)";
     for(int i=0;i<wsClients.size();i++){
         QWebSocket* client = wsClients.at(i);
         client->sendTextMessage(message);

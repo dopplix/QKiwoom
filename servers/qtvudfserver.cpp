@@ -1,5 +1,6 @@
 #include "qtvudfserver.h"
 #include "utils/qhttputil.h"
+#include "global.h"
 #include <QtConcurrent>
 #include <QThread>
 
@@ -20,6 +21,8 @@ void QTvUdfServer::handleBlockedKiwoomRequest(QJsonObject reqObj, QHttpResponse 
     QFutureWatcher<QJsonObject>* futWatcher = new QFutureWatcher<QJsonObject>;
     connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,[=]{
         QJsonObject resultObj = futWatcher->result();
+        qDebug()<<"FINAL SEND"<<resultObj;
+        dispatcher->appendLog(resultObj);
         res->setHeader("Access-Control-Allow-Origin", "*");
         res->writeHead(200);
         res->end(QJsonDocument(resultObj).toJson());
@@ -33,14 +36,14 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
     QString urlStr = req->url().toString();
     qDebug()<<method<<path<<urlStr;
     QJsonObject paramObj = QHttpUtil::urlToObj(urlStr);
-    qDebug()<<"PARAM:"<<paramObj;
+    qDebug()<<"GET PARAM:"<<paramObj;
     if(method=="HTTP_GET"){
         if(path=="/config"){
-            processConfig(res,paramObj);
+            handleConfig(res,paramObj);
         }else if(path=="/symbols"){
-            processSymbol(res,paramObj);
+            handleSymbol(res,paramObj);
         }else if(path=="/history"){
-            processHistory(res,paramObj);
+            handleHistory(res,paramObj);
         }
     }
     else if(method=="HTTP_POST"){
@@ -59,12 +62,13 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
         }
         connect(req,&QHttpRequest::data,[=](QByteArray body){
             QJsonObject reqObj = QJsonDocument::fromJson(body).object();
+            qDebug()<<"POST BODY"<<reqObj;
             reqObj.insert("reqType",reqType);
             handleBlockedKiwoomRequest(reqObj,res);
         });
     }
 }
-void QTvUdfServer::processConfig(QHttpResponse *res, QJsonObject paramObj){
+void QTvUdfServer::handleConfig(QHttpResponse *res, QJsonObject paramObj){
     QJsonObject resObj;
     resObj["supports_group_request"]= false;
     resObj["supports_marks"] = false;
@@ -72,11 +76,13 @@ void QTvUdfServer::processConfig(QHttpResponse *res, QJsonObject paramObj){
     resObj["supports_timescale_marks"] = false;
     sendResponse(res,QJsonDocument(resObj).toJson());
 }
-void QTvUdfServer::processSymbol(QHttpResponse *res, QJsonObject paramObj){
+void QTvUdfServer::handleSymbol(QHttpResponse *res, QJsonObject paramObj){
+    QString symbol = paramObj.value("symbol").toString();
+    QString name = dispatcher->koa->getMasterCodeName(symbol);
     QJsonObject resObj;
-    resObj["name"]="NAME_APPLE";
-    resObj["ticker"]="TICKER_MYAPPLE";
-    resObj["description"]="DESC_AMYDESC";
+    resObj["name"]=name;
+    resObj["ticker"]=symbol;
+    resObj["description"]=symbol+" "+name;
     resObj["type"]="stock";
     resObj["session"]="1900-1530";
     resObj["exchange"]="KRX";
@@ -84,7 +90,8 @@ void QTvUdfServer::processSymbol(QHttpResponse *res, QJsonObject paramObj){
     resObj["data_status"]="delayed_streaming";
     sendResponse(res,QJsonDocument(resObj).toJson());
 }
-void QTvUdfServer::processHistory(QHttpResponse* res, QJsonObject paramObj){
+void QTvUdfServer::handleHistory(QHttpResponse* res, QJsonObject paramObj){
+    QString symbol = paramObj.value("symbol").toString();
     QJsonArray tempTArr = tempKline.value("t").toArray();
     if(!tempTArr.isEmpty()){
         qDebug()<<tempTArr.size();
@@ -105,6 +112,7 @@ void QTvUdfServer::processHistory(QHttpResponse* res, QJsonObject paramObj){
         return;
     }
     QJsonObject reqObj;
+    reqObj.insert("assetCode",symbol);
     reqObj.insert("reqType","GET_HISTORY");
     handleBlockedKiwoomRequest(reqObj,res);
 }

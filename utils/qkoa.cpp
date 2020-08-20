@@ -292,8 +292,8 @@ void QKoa::onReceiveRealCondition(QString sTrCode, QString strType, QString strC
     emit(onMessageReceived(obj));
 }
 void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData){
-    qDebug()<<"void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData)";
-    qDebug()<<"sRealKey"<<sRealKey<<"sRealType"<<sRealType<<"sRealData"<<sRealData;
+    //qDebug()<<"void QKoa::onReceiveRealData(QString sRealKey, QString sRealType, QString sRealData)";
+    //qDebug()<<"sRealKey"<<sRealKey<<"sRealType"<<sRealType<<"sRealData"<<sRealData;
     QJsonObject obj;
     obj.insert("event","onReceiveRealData");
     obj.insert("sRealKey",sRealKey);
@@ -315,7 +315,7 @@ void QKoa::onReceiveTrCondition(QString sScrNo, QString strCodeList, QString str
 }
 void QKoa::onReceiveTrData(QString sScrNo, QString sRQName, QString sTrCode, QString sRecordName, QString sPrevNext, int nDataLength, QString sErrorCode, QString sMessage, QString sSplmMsg){
     qDebug()<<"void QKoa::onReceiveTrData(QString sScrNo, QString sRQName, QString sTrCode, QString sRecordName, QString sPrevNext, int nDataLength, QString sErrorCode, QString sMessage, QString sSplmMsg)";
-    qDebug()<<"sScrNo"<<sScrNo<<"sRQName"<<sRQName<<"sTrCode"<<sTrCode<<"sRecordName"<<sRecordName<<"sPrevNext"<<sPrevNext<<"nDataLength"<<nDataLength<<"sErrorCode"<<sErrorCode<<"sMessage"<<sMessage<<"sSplmMsg"<<sSplmMsg;
+    qDebug()<<"sScrNo"<<sScrNo<<"sRQName"<<sRQName<<"sTrCode"<<sTrCode<<"sRecordName"<<sRecordName<<"sPrevNext"<<sPrevNext<<"nDataLength"<<nDataLength<<"sErrorCode"<<sErrorCode<<"sMessage"<<sMessage<<"sSplmMsg"<<sSplmMsg<<"\n";
     QJsonObject obj;
     obj.insert("event","onReceiveTrData");
     obj.insert("sScrNo",sScrNo);
