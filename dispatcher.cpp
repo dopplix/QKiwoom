@@ -91,22 +91,6 @@ void Dispatcher::routeKoaEvents(){
                 emit(trResultReceived(finalResultObj));
             }
         }
-        else if(event=="onReceiveConditionVer"){
-            initConditions();
-        }
-        else if(event=="onReceiveRealCondition"){
-            QString assetCode = obj.value("sTrCode").toString();
-            QJsonObject queryObj;
-            QString uuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-            queryObj.insert("condIndex",obj.value("strConditionIndex").toString());
-            queryObj.insert("condName",obj.value("strConditionName").toString());
-            queryObj.insert("event",obj.value("strType").toString());
-            queryObj.insert("assetCode",assetCode);
-            queryObj.insert("assetName",koa->getMasterCodeName(assetCode));
-            store.setValue(uuid,queryObj);
-            koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
-            koa->commRqData(uuid,"OPT10003",0,"1200");
-        }
         else if(event=="onReceiveRealData"){
             //qDebug()<<obj;
             QString assetCode = obj.value("sRealKey").toString();
@@ -122,6 +106,46 @@ void Dispatcher::routeKoaEvents(){
             resultObj.insert("type",type);
             resultObj.insert("asset",koa->getMasterCodeName(assetCode));
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+        }
+        else if(event=="onReceiveChejanData"){
+            qDebug()<<"ON_RECEIVE_CHEJAN_DATA";
+            QString sGubun = obj.value("sGubun").toString();
+            QString fids = obj.value("sFIdList").toString();
+            QStringList fidList = fids.split(";");
+            QString realType;
+            if(sGubun=="0"){
+                realType = krMapObj.value("filled").toString();
+            }else if(sGubun=="1"){
+                realType = krMapObj.value("balance").toString();
+            }else{
+                qDebug()<<"OTHER SGUBUN"<<obj;
+                return;
+            }
+            QJsonObject fidObj = fidDocObj.value(realType).toObject();
+            QJsonObject resultObj;
+            for(QString fid : fidObj.keys()){
+                QString key = fidObj.value(fid).toString();
+                QString data = koa->getChejanData(fid.toInt());
+                resultObj.insert(key,data);
+            }
+            resultObj.insert("type",realType);
+            bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+        }
+        else if(event=="onReceiveConditionVer"){
+            initConditions();
+        }
+        else if(event=="onReceiveRealCondition"){
+            QString assetCode = obj.value("sTrCode").toString();
+            QJsonObject queryObj;
+            QString uuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            queryObj.insert("condIndex",obj.value("strConditionIndex").toString());
+            queryObj.insert("condName",obj.value("strConditionName").toString());
+            queryObj.insert("event",obj.value("strType").toString());
+            queryObj.insert("assetCode",assetCode);
+            queryObj.insert("assetName",koa->getMasterCodeName(assetCode));
+            store.setValue(uuid,queryObj);
+            koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
+            koa->commRqData(uuid,"OPT10003",0,"1200");
         }
     });
 }

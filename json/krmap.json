@@ -17,5 +17,7 @@
     "high":"고가",
     "low":"저가",
     "close":"현재가",
-    "volume":"거래량"
+    "volume":"거래량",
+    "filled":"주문체결",
+    "balance":"잔고"
 }
