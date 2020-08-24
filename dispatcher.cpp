@@ -129,6 +129,7 @@ void Dispatcher::routeKoaEvents(){
                 resultObj.insert(key,data);
             }
             resultObj.insert("type",realType);
+            qDebug()<<resultObj;
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
         }
         else if(event=="onReceiveConditionVer"){
