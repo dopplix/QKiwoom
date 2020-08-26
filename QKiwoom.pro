@@ -59,7 +59,9 @@ HEADERS += \
     servers/qtvudfserver.h
 
 INCLUDEPATH += $$PWD/qhttpserver/qhttpserver/src
-LIBS += -L$$PWD/qhttpserver/lib -lqhttpserverd
+#LIBS += -L$$PWD/qhttpserver/lib -lqhttpserverd
+CONFIG += debug
+LIBS += -L$$PWD/qhttpserver/lib -lqhttpserver
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

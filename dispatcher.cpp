@@ -81,8 +81,10 @@ void Dispatcher::routeKoaEvents(){
     connect(koa,&QKoa::onMessageReceived,[=](QJsonObject obj){
         QString event = obj.value("event").toString();
         QString sScrNo = obj.value("sScrNo").toString();
+        int scrInt = sScrNo.toInt();
         if(event=="onReceiveTrData"){
-            if(sScrNo=="1100"){
+            qDebug()<<"SCRNO"<<scrInt;
+            if(scrInt<4000 && scrInt>=3000){
                 QString sRQName = obj.value("sRQName").toString();
                 QString optName = obj.value("sTrCode").toString();
                 QJsonObject trObj = getTrObj(optName);
@@ -283,14 +285,15 @@ QVariant Dispatcher::callKoaTr(QString optName, QJsonArray argArr, QString sRQNa
     //QString sRQName = "TrTab";
     QString sTrCode = optName;
     int nPrevNext = 0;
-    QString sScrNo = "1100";
+    QString sScrNo = QString::number(3000+trScrNo%1000);
+    trScrNo++;
     QVariant result = koa->commRqData(sRQName,sTrCode,nPrevNext,sScrNo);
     return result;
 }
 QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
     QString sRQName = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    qDebug()<<"QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr)";
-    qDebug()<<optName<<argArr<<sRQName<<"\n";
+    //qDebug()<<"QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr)";
+    //qDebug()<<optName<<argArr<<sRQName<<"\n";
     QEventLoop* loopPtr = new QEventLoop;
     QJsonObject* resultHolder = new QJsonObject;
     QTimer timer;
@@ -298,7 +301,7 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
     connect(this,&Dispatcher::trResultReceived,&receiver,[resultHolder,loopPtr,sRQName,optName](QJsonObject resultObj){
         QString receivedSRQName = resultObj.value("sRQName").toString();
         QString receivedOptName = resultObj.value("optName").toString();
-        qDebug()<<"# IN REQUEST KOA TR LOOP ELIMINATOR"<<"\n"<<"sRQ"<<sRQName<<"receivedSRQ"<<receivedSRQName<<"\n";
+        qDebug()<<"# IN REQUEST KOA TR LOOP ELIMINATOR"<<"\n"<<"sRQ"<<sRQName<<"receivedSRQ"<<receivedSRQName;
         if(receivedSRQName==sRQName || receivedOptName==optName){
             resultHolder->insert("result",resultObj);
             loopPtr->quit();

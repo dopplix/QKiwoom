@@ -32,6 +32,7 @@ public:
     QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
     QJsonObject getAssets();
     QJsonObject parseBarObj(QJsonObject barObj);
+    int trScrNo = 0;
 
 public slots:
     void dispatch(QString actionType, QJsonObject payload) override;

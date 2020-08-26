@@ -2,18 +2,23 @@
 #include "utils/qhttputil.h"
 #include "global.h"
 #include <QtConcurrent>
-#include <QThread>
 
 QTvUdfServer::QTvUdfServer(quint16 port, QObject *parent) : QObject(parent){
-    QHttpServer *server = new QHttpServer(this);
+    qDebug()<<"QTvUdfServer::QTvUdfServer(quint16 port, QObject *parent) : QObject(parent)";
     connect(server, SIGNAL(newRequest(QHttpRequest*, QHttpResponse*)),this, SLOT(handleRequest(QHttpRequest*, QHttpResponse*)));
     server->listen(QHostAddress::Any, port);
+    threadPool->setMaxThreadCount(1);
 }
-
+QTvUdfServer::~QTvUdfServer(){
+    qDebug()<<"QTvUdfServer::~QTvUdfServer()";
+    delete server;
+}
 void QTvUdfServer::handleBlockedKiwoomRequest(QJsonObject reqObj, QHttpResponse *res){
-    QFuture<QJsonObject> future = QtConcurrent::run([=]{
+    QFuture<QJsonObject> future = QtConcurrent::run(threadPool,[=]{
+        qDebug()<<"# IN TO REQUEST KIWOOM"<<QThread::currentThread()<<threadPool->maxThreadCount()<<threadPool->activeThreadCount();
         QJsonObject* koaRetObj = new QJsonObject();
         emit(requestKiwoomData(reqObj,koaRetObj));
+        qDebug()<<"# OUT FROM REQUEST KIWOOM"<<QThread::currentThread()<<threadPool->maxThreadCount()<<threadPool->activeThreadCount();
         QJsonObject resultObj = koaRetObj->value("result").toObject();
         delete koaRetObj;
         return resultObj;
@@ -21,8 +26,13 @@ void QTvUdfServer::handleBlockedKiwoomRequest(QJsonObject reqObj, QHttpResponse 
     QFutureWatcher<QJsonObject>* futWatcher = new QFutureWatcher<QJsonObject>;
     connect(futWatcher,&QFutureWatcher<QJsonObject>::finished,[=]{
         QJsonObject resultObj = futWatcher->result();
-        qDebug()<<"FINAL SEND"<<resultObj;
-        dispatcher->appendLog(resultObj);
+        qDebug()<<"FINAL SEND"<<resultObj.keys();
+        if(resultObj.keys().contains("multi")){
+            qDebug()<<"MULTI 0"<<resultObj.value("multi").toArray().at(0)<<"\n";
+        }else{
+            qDebug()<<"NOT MULTI"<<resultObj<<"\n";
+        }
+        //dispatcher->appendLog(resultObj);
         res->setHeader("Access-Control-Allow-Origin", "*");
         res->writeHead(200);
         res->end(QJsonDocument(resultObj).toJson());
@@ -84,7 +94,7 @@ void QTvUdfServer::handleSymbol(QHttpResponse *res, QJsonObject paramObj){
     resObj["ticker"]=symbol;
     resObj["description"]=symbol+" "+name;
     resObj["type"]="stock";
-    resObj["session"]="1900-1530";
+    resObj["session"]="0900-1530";
     resObj["exchange"]="KRX";
     resObj["timezone"]="Asia/Seoul";
     resObj["data_status"]="delayed_streaming";
