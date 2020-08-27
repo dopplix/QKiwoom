@@ -49,10 +49,15 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
         QString reqType;
         if(path=="/tr"){
             reqType = "POST_TR";
-        }else if(path=="/fnc"){
+        }
+        else if(path=="/fnc"){
             reqType = "POST_FNC";
-        }else if(path=="/assets"){
+        }
+        else if(path=="/assets"){
             reqType = "POST_ASSETS";
+        }
+        else if(path=="/cond"){
+            reqType = "POST_COND";
         }
         else{
             res->writeHead(400);

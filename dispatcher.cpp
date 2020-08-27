@@ -41,7 +41,8 @@ void Dispatcher::initUdfWorker(){
         }
         else if(reqType=="POST_ASSETS"){
             QJsonArray assetCodes = req.value("assets").toArray();
-            QJsonObject assetObjs = getAssets();
+            QString codeStr = koa->getCodeListByMarket("0");
+            QJsonObject assetObjs = parseAssets(codeStr);
             if(assetCodes.size()==0){
                 resObj->insert("result",assetObjs);
                 return;
@@ -52,6 +53,16 @@ void Dispatcher::initUdfWorker(){
                 filteredObj.insert(key,assetObjs.value(key));
             }
             resObj->insert("result",filteredObj);
+        }
+        else if(reqType=="POST_COND"){
+            int condLoadResult = koa->getConditionLoad();
+            if(condLoadResult==0){
+                resObj->insert("result","Condition Load Failed");
+                return;
+            }
+            QString condStr = koa->getConditionNameList();
+            QJsonObject condObj = parseConditions(condStr);
+            resObj->insert("result",condObj);
         }
     },Qt::BlockingQueuedConnection);
 }
@@ -132,16 +143,16 @@ void Dispatcher::routeKoaEvents(){
         }
         else if(event=="onReceiveRealCondition"){
             QString assetCode = obj.value("sTrCode").toString();
-            QJsonObject queryObj;
-            QString uuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-            queryObj.insert("condIndex",obj.value("strConditionIndex").toString());
-            queryObj.insert("condName",obj.value("strConditionName").toString());
-            queryObj.insert("event",obj.value("strType").toString());
-            queryObj.insert("assetCode",assetCode);
-            queryObj.insert("assetName",koa->getMasterCodeName(assetCode));
-            store.setValue(uuid,queryObj);
-            koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
-            koa->commRqData(uuid,"OPT10003",0,"1200");
+            QJsonObject resultObj;
+            resultObj.insert("condIndex",obj.value("strConditionIndex").toString());
+            resultObj.insert("condName",obj.value("strConditionName").toString());
+            resultObj.insert("event",obj.value("strType").toString());
+            resultObj.insert("assetCode",assetCode);
+            resultObj.insert("assetName",koa->getMasterCodeName(assetCode));
+            bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+//            store.setValue(uuid,queryObj);
+//            koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
+//            koa->commRqData(uuid,"OPT10003",0,"1200");
         }
     });
 }
@@ -215,7 +226,8 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
         appendLog(resultObj);
     }
     else if(actionType==ActionTypes::AssetTab::REQUEST_ASSET_LIST){
-        QJsonObject assets = getAssets();
+        QString codeStr = koa->getCodeListByMarket("0");
+        QJsonObject assets = parseAssets(codeStr);
         store.setValue("assetDoc",assets);
         appendLog(assets);
     }
@@ -290,8 +302,7 @@ QJsonObject Dispatcher::requestKoaTr(QString optName, QJsonArray argArr){
     delete resultHolder;
     return result;
 }
-QJsonObject Dispatcher::getAssets(){
-    QString codeStr = koa->getCodeListByMarket("0");
+QJsonObject Dispatcher::parseAssets(QString& codeStr){
     QStringList codeList = codeStr.split(";");
     codeList.removeOne("");
     QJsonObject assets;
@@ -306,4 +317,16 @@ QJsonObject Dispatcher::getAssets(){
         assets.insert(code,obj);
     }
     return assets;
+}
+QJsonObject Dispatcher::parseConditions(QString &condStr){
+    qDebug()<<"[Dispatcher::parseConditions]"<<condStr;
+    QStringList condList = condStr.split(";");
+    condList.removeOne("");
+    QJsonObject condObj;
+    for(QString cond : condList){
+        QString condKey = cond.split("^").at(0);
+        QString condName = cond.split("^").at(1);
+        condObj.insert(condKey,condName);
+    }
+    return condObj;
 }

@@ -29,8 +29,8 @@ public:
     QVariant callKoaFnc(QString fncName, QJsonArray argArr);
     QVariant callKoaTr(QString optName, QJsonArray argArr,QString sRQName);
     QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
-    QJsonObject getAssets();
-    QJsonObject parseBarObj(QJsonObject barObj);
+    QJsonObject parseAssets(QString& codeStr);
+    QJsonObject parseConditions(QString& condStr);
     int trScrNo = 0;
 
 public slots:
