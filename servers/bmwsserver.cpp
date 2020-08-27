@@ -23,6 +23,11 @@ void BmWsServer::processMessage(QString message){
     QWebSocket *client = qobject_cast<QWebSocket *>(sender());
     qDebug()<<getIdentifier(client)<<message;
     emit(messageReceived(message));
+    QJsonObject msgObj = QJsonDocument::fromJson(message.toUtf8()).object();
+    if(msgObj.keys().contains("name")){
+        QString clientName = msgObj.value("name").toString();
+        clientMap.insert(clientName,client);
+    }
 }
 void BmWsServer::socketDisconnected(){
     QWebSocket *client = qobject_cast<QWebSocket *>(sender());
@@ -38,4 +43,8 @@ void BmWsServer::sendMessageToAllClient(QString message){
         QWebSocket* client = wsClients.at(i);
         client->sendTextMessage(message);
     }
+}
+void BmWsServer::sendMessageToClient(QString name, QString message){
+    QWebSocket* client = clientMap.value(name);
+    client->sendTextMessage(message);
 }

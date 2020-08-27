@@ -98,7 +98,7 @@ void Dispatcher::routeKoaEvents(){
             }
         }
         else if(event=="onReceiveRealData"){
-            //qDebug()<<obj;
+            //qDebug()<<"[onReceiveRealData]"<<obj;
             QString assetCode = obj.value("sRealKey").toString();
             QString type = obj.value("sRealType").toString();
             QJsonObject fidObj = fidDocObj.value(type).toObject();
@@ -150,6 +150,7 @@ void Dispatcher::routeKoaEvents(){
             resultObj.insert("assetCode",assetCode);
             resultObj.insert("assetName",koa->getMasterCodeName(assetCode));
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+//            koa->setRealReg("5001",assetCode,"9001;302;10;11;25;12;13","1");
 //            store.setValue(uuid,queryObj);
 //            koa->setInputValue(krMapObj.value("assetCode").toString(),assetCode);
 //            koa->commRqData(uuid,"OPT10003",0,"1200");
