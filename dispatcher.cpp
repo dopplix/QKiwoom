@@ -30,14 +30,16 @@ void Dispatcher::initUdfWorker(){
             QJsonArray argArr = req.value("argArr").toArray();
             QJsonObject resultObj = requestKoaTr(optName,argArr);
             resObj->insert("result",resultObj);
-        }else if(reqType=="POST_FNC"){
+        }
+        else if(reqType=="POST_FNC"){
             QString fncName = req.value("fncName").toString();
             QJsonArray argArr = req.value("argArr").toArray();
             QVariant result = callKoaFnc(fncName,argArr);
             QJsonObject resultObj;
             resultObj.insert("returnValue",result.toJsonValue());
             resObj->insert("result",resultObj);
-        }else if(reqType=="POST_ASSETS"){
+        }
+        else if(reqType=="POST_ASSETS"){
             QJsonArray assetCodes = req.value("assets").toArray();
             QJsonObject assetObjs = getAssets();
             if(assetCodes.size()==0){
@@ -50,15 +52,6 @@ void Dispatcher::initUdfWorker(){
                 filteredObj.insert(key,assetObjs.value(key));
             }
             resObj->insert("result",filteredObj);
-        }else if(reqType=="GET_HISTORY"){
-            QString assetCode = req.value("assetCode").toString();
-            QJsonArray argsArr;
-            argsArr.append(assetCode);
-            argsArr.append("20200810");
-            argsArr.append("0");
-            QJsonObject barObj = requestKoaTr("OPT10081",argsArr);
-            QJsonObject parsedBarObj = parseBarObj(barObj);
-            resObj->insert("result",parsedBarObj);
         }
     },Qt::BlockingQueuedConnection);
 }
@@ -227,29 +220,6 @@ void Dispatcher::dispatch(QString actionType, QJsonObject payload){
         appendLog(assets);
     }
 }
-bool Dispatcher::sendCondToMysql(QString condIndex, QString condName, QString assetName, QString event, QString assetCode, QString sign, QString accAmount, QString accSize, QString rate, QString lastTrTime, QString bestAsk, QString bestBid, QString diffPrice, QString intense, QString size, QString price){
-    QSqlQuery query;
-    query.prepare("INSERT INTO tb_cond (eventTime,condIndex,condName,assetName,event,assetCode,sign,accAmount,accSize,rate,lastTrTime,bestAsk,bestBid,diffPrice,intense,size,price)"
-                  "VALUES (:eventTime,:condIndex,:condName,:assetName,:event,:assetCode,:sign,:accAmount,:accSize,:rate,:lastTrTime,:bestAsk,:bestBid,:diffPrice,:intense,:size,:price)");
-    query.bindValue(":eventTime",QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    query.bindValue(":condIndex",condIndex);
-    query.bindValue(":condName",condName);
-    query.bindValue(":assetName",assetName);
-    query.bindValue(":event",event);
-    query.bindValue(":assetCode",assetCode);
-    query.bindValue(":sign",sign);
-    query.bindValue(":accAmount",accAmount);
-    query.bindValue(":accSize",accSize);
-    query.bindValue(":rate",rate);
-    query.bindValue(":lastTrTime",lastTrTime);
-    query.bindValue(":bestAsk",bestAsk);
-    query.bindValue(":bestBid",bestBid);
-    query.bindValue(":diffPrice",diffPrice);
-    query.bindValue(":intense",intense);
-    query.bindValue(":size",size);
-    query.bindValue(":price",price);
-    return query.exec();
-}
 QVariant Dispatcher::callKoaFnc(QString fncName, QJsonArray argArr){
     QJsonObject fncObj = getFncObj(fncName);
     QJsonArray paramArr = fncObj.value("params").toArray();
@@ -336,37 +306,4 @@ QJsonObject Dispatcher::getAssets(){
         assets.insert(code,obj);
     }
     return assets;
-}
-QJsonObject Dispatcher::parseBarObj(QJsonObject barObj){
-    QJsonArray klineArr = barObj.value("multi").toArray();
-    QJsonArray tArr;
-    QJsonArray oArr;
-    QJsonArray hArr;
-    QJsonArray lArr;
-    QJsonArray cArr;
-    QJsonArray vArr;
-    for(QJsonValue v : klineArr){
-        QJsonObject obj = v.toObject();
-        QString date = obj.value(krMapObj.value("date").toString()).toString();
-        QString open = obj.value(krMapObj.value("open").toString()).toString();
-        QString high = obj.value(krMapObj.value("high").toString()).toString();
-        QString low = obj.value(krMapObj.value("low").toString()).toString();
-        QString close = obj.value(krMapObj.value("close").toString()).toString();
-        QString volume = obj.value(krMapObj.value("volume").toString()).toString();
-        tArr.insert(0,double(QTimeUtil::kiwoomToDt(date).toTime_t()));
-        oArr.insert(0,open.toDouble());
-        hArr.insert(0,high.toDouble());
-        lArr.insert(0,low.toDouble());
-        cArr.insert(0,close.toDouble());
-        vArr.insert(0,volume.toDouble());
-    }
-    QJsonObject resObj;
-    resObj.insert("s","ok");
-    resObj.insert("t",tArr);
-    resObj.insert("o",oArr);
-    resObj.insert("h",hArr);
-    resObj.insert("l",lArr);
-    resObj.insert("c",cArr);
-    resObj.insert("v",vArr);
-    return resObj;
 }

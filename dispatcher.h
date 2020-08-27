@@ -14,7 +14,6 @@ class Dispatcher : public DispatcherCore{
 public:
     Dispatcher();
     QKoa* koa = new QKoa;
-    QMysql* mysql = new QMysql;
     QTvUdfServer* udfServer = new QTvUdfServer(1204);
     BmWsServer* bmWsServer = new BmWsServer(1989);
     QThread* udfThread;
