@@ -19,5 +19,6 @@
     "close":"현재가",
     "volume":"거래량",
     "filled":"주문체결",
-    "balance":"잔고"
+    "balance":"잔고",
+    "condition":"조건식"
 }

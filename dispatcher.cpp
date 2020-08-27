@@ -3,12 +3,16 @@
 #include <QUuid>
 #include <QSqlQuery>
 #include <QSharedPointer>
+#include <QElapsedTimer>
 #include "dispatcher.h"
 #include "global.h"
 
 Dispatcher::Dispatcher(){
     initUdfWorker();
     routeKoaEvents();
+    connect(&currentPriceObjM,&QJsonObjectMutex::somethingChanged,[this](QJsonObject diffObj){
+        bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(currentPriceObjM.getObject()));
+    });
 }
 QJsonObject Dispatcher::getFncObj(QString fncName){
     return QJsonUtils::findObjFromArrByKey(fncDocArr,"functionName",fncName);
@@ -54,7 +58,7 @@ void Dispatcher::initUdfWorker(){
             }
             resObj->insert("result",filteredObj);
         }
-        else if(reqType=="POST_COND"){
+        else if(reqType=="GET_COND"){
             int condLoadResult = koa->getConditionLoad();
             if(condLoadResult==0){
                 resObj->insert("result","Condition Load Failed");
@@ -112,6 +116,7 @@ void Dispatcher::routeKoaEvents(){
             resultObj.insert("type",type);
             resultObj.insert("asset",koa->getMasterCodeName(assetCode));
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
+            currentPriceObjM.setValue(assetCode,resultObj.value(krMapObj.value("price").toString()).toString());
         }
         else if(event=="onReceiveChejanData"){
             qDebug()<<"ON_RECEIVE_CHEJAN_DATA";
@@ -149,6 +154,7 @@ void Dispatcher::routeKoaEvents(){
             resultObj.insert("event",obj.value("strType").toString());
             resultObj.insert("assetCode",assetCode);
             resultObj.insert("assetName",koa->getMasterCodeName(assetCode));
+            resultObj.insert("type",krMapObj.value("condition").toString());
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
 //            koa->setRealReg("5001",assetCode,"9001;302;10;11;25;12;13","1");
 //            store.setValue(uuid,queryObj);
@@ -197,10 +203,18 @@ QJsonObject Dispatcher::processTr(QJsonObject trObj){
 void Dispatcher::dispatch(QString actionType, QJsonObject payload){
     qDebug()<<"DISPATCH"<<actionType<<payload;
     if(actionType==ActionTypes::TEST){
-        koa->setInputValue(krMapObj.value("assetCode").toString(),"000060");
-        koa->setInputValue(krMapObj.value("targetDate").toString(),"20200716");
-        koa->setInputValue(krMapObj.value("modifiedPriceIndex").toString(),"0");
-        koa->commRqData("UDF","OPT10081",0,"1989");
+        QString codeStr = koa->getCodeListByMarket("0");
+        QStringList codeList = codeStr.split(";");
+        codeList.removeOne("");
+        QElapsedTimer timer;
+        timer.start();
+        for(int i=0;i<codeList.size();i++){
+            //qDebug()<<i;
+            QString code = codeList.at(i);
+            QString scrNo = QString::number(5000+(i-i%100)/100);
+            koa->setRealReg(scrNo,codeList.at(i),"9001;302;10;11;25;12;13","1");
+        }
+        qDebug()<<"[ELAPSED]"<<timer.elapsed()<<"REALTIME REGESTER FINISHED";
     }
     else if(actionType==ActionTypes::FncTab::CHANGE_CURRENT_FUNCTION){
         QString currentFncName = payload.value("currentFncName").toString();

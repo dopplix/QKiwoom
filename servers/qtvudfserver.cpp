@@ -73,6 +73,13 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
     }else if(method=="HTTP_GET"){
         QJsonObject paramObj = QHttpUtil::urlToObj(urlStr);
         qDebug()<<"[HTTP GET PARAM]"<<paramObj;
+        QString reqType;
+        if(path=="/cond"){
+            reqType = "GET_COND";
+        }
+        QJsonObject reqObj;
+        reqObj.insert("reqType",reqType);
+        handleBlockedKiwoomRequest(reqObj,res);
     }
 }
 void QTvUdfServer::sendResponse(QHttpResponse *res, QByteArray msg){

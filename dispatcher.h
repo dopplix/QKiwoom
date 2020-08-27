@@ -7,6 +7,7 @@
 #include "utils/qmysql.h"
 #include "servers/qtvudfserver.h"
 #include "servers/bmwsserver.h"
+#include "qflux/store/qjsonobjectmutex.h"
 
 class Dispatcher : public DispatcherCore{
     Q_OBJECT
@@ -31,6 +32,7 @@ public:
     QJsonObject requestKoaTr(QString optName, QJsonArray argArr);
     QJsonObject parseAssets(QString& codeStr);
     QJsonObject parseConditions(QString& condStr);
+    QJsonObjectMutex currentPriceObjM;
     int trScrNo = 0;
 
 public slots:
