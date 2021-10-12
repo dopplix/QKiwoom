@@ -116,7 +116,9 @@ void Dispatcher::routeKoaEvents(){
             resultObj.insert("type",type);
             resultObj.insert("asset",koa->getMasterCodeName(assetCode));
             bmWsServer->sendMessageToAllClient(QJsonUtils::objToStr(resultObj));
-            currentPriceObjM.setValue(assetCode,resultObj.value(krMapObj.value("price").toString()).toString());
+            if(type==krMapObj.value("trade").toString()){
+                currentPriceObjM.setValue(assetCode,resultObj.value(krMapObj.value("price").toString()).toString());
+            }
         }
         else if(event=="onReceiveChejanData"){
             qDebug()<<"ON_RECEIVE_CHEJAN_DATA";

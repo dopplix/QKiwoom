@@ -45,8 +45,8 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
     QString path = req->path();
     QString urlStr = req->url().toString();
     qDebug()<<"[HTTP REQUEST RECEIVED]"<<method<<path<<urlStr;
+    QString reqType;
     if(method=="HTTP_POST"){
-        QString reqType;
         if(path=="/tr"){
             reqType = "POST_TR";
         }
@@ -56,9 +56,6 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
         else if(path=="/assets"){
             reqType = "POST_ASSETS";
         }
-        else if(path=="/cond"){
-            reqType = "POST_COND";
-        }
         else{
             res->writeHead(400);
             res->end("Bad Request [Supported Post Path : {/tr, /fnc, /asset} ]");
@@ -66,20 +63,27 @@ void QTvUdfServer::handleRequest(QHttpRequest* req, QHttpResponse* res){
         }
         connect(req,&QHttpRequest::data,[=](QByteArray body){
             QJsonObject reqObj = QJsonDocument::fromJson(body).object();
-            qDebug()<<"POST BODY"<<reqObj;
+            qDebug()<<"[HTTP POST BODY]"<<reqObj;
             reqObj.insert("reqType",reqType);
             handleBlockedKiwoomRequest(reqObj,res);
         });
     }else if(method=="HTTP_GET"){
         QJsonObject paramObj = QHttpUtil::urlToObj(urlStr);
         qDebug()<<"[HTTP GET PARAM]"<<paramObj;
-        QString reqType;
         if(path=="/cond"){
             reqType = "GET_COND";
         }
-        QJsonObject reqObj;
+        QJsonObject reqObj = QJsonObject();
         reqObj.insert("reqType",reqType);
         handleBlockedKiwoomRequest(reqObj,res);
+    }else if(method=="HTTP_OPTIONS"){
+        res->setHeader("Access-Control-Allow-Origin", "*");
+        res->setHeader("Allow","GET, POST, OPTIONS");
+        res->setHeader("Access-Control-Allow-Methods","GET, POST, OPTIONS");
+        res->setHeader("Access-Control-Allow-Headers","Content-Type");
+        res->writeHead(200);
+        res->end();
+        return;
     }
 }
 void QTvUdfServer::sendResponse(QHttpResponse *res, QByteArray msg){
