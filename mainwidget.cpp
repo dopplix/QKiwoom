@@ -69,6 +69,7 @@ MainWidget::MainWidget(QWidget *parent) : ConnectedWidget(parent){
     });
     connectTabActions();
     initializeKoaEventRouter();
+    testPush->hide();
 }
 MainWidget::~MainWidget(){
 

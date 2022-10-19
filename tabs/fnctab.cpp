@@ -73,6 +73,7 @@ FncTab::FncTab(QWidget *parent) : ConnectedWidget(parent){
             });
         }
     });
+    testRealInputPush->hide();
 }
 void FncTab::onStoreChanged(QJsonObject diffObj){
     if(diffObj.keys().contains("currentFnc")){
